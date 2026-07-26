@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PHED Nazira — Flood Relief Operations Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d2438;
+    --teal:#14506b;
+    --cyan:#1f7a99;
+    --green:#2f8f5b;
+    --amber:#c9902e;
+    --maroon:#8f3b3b;
+    --paper:#eef2ef;
+    --paper-2:#e3e9e5;
+    --card:#ffffff;
+    --line:#d7dfda;
+    --muted:#5b6b66;
+    --danger:#b72f3d;
+    --safe:#2f8f5b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:
+      linear-gradient(180deg, var(--paper) 0%, var(--paper-2) 100%);
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    padding:22px;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .container{max-width:1480px;margin:0 auto;}
+
+  /* ============ MASTHEAD ============ */
+  .masthead{
+    background:
+      radial-gradient(1200px 260px at 8% -40%, rgba(255,255,255,0.08), transparent 60%),
+      linear-gradient(120deg, var(--ink) 0%, var(--teal) 60%, var(--cyan) 130%);
+    color:#eaf2f4;
+    border-radius:4px;
+    padding:26px 32px 22px;
+    margin-bottom:20px;
+    position:relative;
+    overflow:hidden;
+    border-left:6px solid var(--amber);
+  }
+  .masthead::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:0;
+    height:10px;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,0.14) 0 26px, transparent 26px 52px);
+    opacity:0.5;
+  }
+  .masthead-top{
+    display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#bcd8de;
+    margin-bottom:6px;
+  }
+  .masthead h1{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;
+    font-size:38px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    line-height:1;
+  }
+  .masthead h1 span{color:var(--amber);}
+  .masthead .desc{
+    font-size:14.5px;
+    color:#cfe3e6;
+    margin-top:6px;
+    max-width:560px;
+  }
+  .status-block{text-align:right;}
+  .status-flag{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:7px 16px;
+    border-radius:3px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    background:rgba(47,143,91,0.18);
+    border:1px solid rgba(47,143,91,0.55);
+    color:#a9e8c2;
+  }
+  .status-flag.critical{
+    background:rgba(183,47,61,0.2);
+    border:1px solid rgba(183,47,61,0.6);
+    color:#ffb3ba;
+  }
+  .status-flag .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#3ddc84;
+    box-shadow:0 0 8px #3ddc84;
+  }
+  .status-flag.critical .dot{background:#ff5a68;box-shadow:0 0 8px #ff5a68;}
+  .timestamp{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:#a7c2c7;
+    margin-top:8px;
+  }
+  .refresh-btn{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:7px 14px;
+    background:#ffffff;
+    color:var(--teal);
+    border:1px solid var(--line);
+    border-radius:3px;
+    font-family:'Inter';
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.3px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:all 0.2s ease;
+  }
+  .refresh-btn:hover{background:#f0f4f2;border-color:var(--teal);}
+  .refresh-btn:active{transform:scale(0.98);}
+  .refresh-btn.loading{opacity:0.6;pointer-events:none;}
+  .refresh-spinner{display:inline-block;width:12px;height:12px;border:2px solid #d7dfda;border-top-color:var(--teal);border-radius:50%;animation:spin 0.6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ============ ALERT BANNER ============ */
+  .alert-banner{
+    display:none;
+    align-items:center;
+    gap:12px;
+    background:#fbe9ea;
+    border:1px solid #e6b7bc;
+    color:var(--danger);
+    padding:12px 18px;
+    border-radius:4px;
+    font-size:13.5px;
+    font-weight:600;
+    margin-bottom:20px;
+  }
+  .alert-banner.show{display:flex;}
+
+  /* ============ SECTION HEADERS ============ */
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    margin:34px 0 14px;
+  }
+  .section-head .idx{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    color:var(--muted);
+    border:1px solid var(--line);
+    padding:2px 8px;
+    border-radius:2px;
+  }
+  .section-head h2{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;
+    font-size:23px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+  }
+  .section-head .rule{
+    flex:1;height:1px;background:var(--line);
+  }
+
+  /* ============ OBJECTIVE TANKS (signature element) ============ */
+  .tank-row{
+    display:grid;
+    grid-template-columns:1.3fr repeat(5,1fr);
+    gap:14px;
+    margin-bottom:8px;
+  }
+  .tank-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:16px 14px 14px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    box-shadow:0 1px 3px rgba(13,36,56,0.05);
+  }
+  .tank-card.overall{
+    background:linear-gradient(160deg,var(--ink),var(--teal));
+    color:#e9f2f4;
+    border:none;
+  }
+  .tank{
+    position:relative;
+    width:64px;height:110px;
+    border-radius:8px 8px 4px 4px;
+    background:#eef2f0;
+    overflow:hidden;
+    border:2px solid rgba(13,36,56,0.12);
+  }
+  .tank-card.overall .tank{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);}
+  .tank-fill{
+    position:absolute;
+    bottom:0;left:0;right:0;
+    height:0%;
+    transition:height 1s cubic-bezier(.4,0,.2,1);
+  }
+  .tank-fill svg{position:absolute;top:-9px;left:0;width:200%;height:16px;animation:waveMove 3.2s linear infinite;}
+  .tank-fill .body-fill{position:absolute;top:6px;left:0;right:0;bottom:0;}
+  @keyframes waveMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .tank-pct{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:700;
+    font-size:19px;
+    margin-top:10px;
+  }
+  .tank-label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.4px;
+    color:var(--muted);
+    text-align:center;
+    margin-top:2px;
+    font-weight:600;
+  }
+  .tank-card.overall .tank-label{color:#bcd8de;}
+  .tank-sub{font-size:10.5px;color:var(--muted);margin-top:2px;}
+  .tank-card.overall .tank-sub{color:#9dc4ca;}
+
+  /* ============ OBJECTIVE DETAIL BLOCKS ============ */
+  .obj-block{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:20px 22px 22px;
+    margin-bottom:16px;
+    border-top:4px solid var(--teal);
+  }
+  .obj-block .obj-head{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+    margin-bottom:14px;
+  }
+  .obj-block .obj-head h3{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:19px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.3px;
+  }
+  .obj-block .obj-target{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    color:var(--muted);
+  }
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px;
+  }
+  .stat{
+    padding:12px 14px;
+    background:#f7f9f8;
+    border-radius:4px;
+    border-left:3px solid var(--teal);
+  }
+  .stat .n{font-family:'Barlow Condensed',sans-serif;font-size:25px;font-weight:700;color:var(--ink);}
+  .stat .l{font-size:11px;text-transform:uppercase;letter-spacing:0.3px;color:var(--muted);font-weight:600;margin-top:2px;}
+  .stat .sub{font-size:9px;color:#999;margin-top:4px;font-style:italic;}
+
+  /* ============ ROW: CHART + GAUGE ============ */
+  .row{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:14px;}
+  .chart-wrapper{position:relative;height:250px;}
+  .gauge-container{display:flex;flex-direction:column;align-items:center;justify-content:center;height:230px;}
+  .gauge-ring{
+    width:150px;height:150px;border-radius:50%;
+    background:conic-gradient(var(--green) 0% 0%, #e4eae7 0% 100%);
+    display:flex;align-items:center;justify-content:center;
+    transition:background 0.6s ease;
+  }
+  .gauge-ring .inner{
+    width:112px;height:112px;border-radius:50%;background:#fff;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;color:var(--ink);
+  }
+  .gauge-ring .inner small{font-family:'Inter';font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;}
+  .gauge-label{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center;max-width:220px;}
+
+  /* ============ TABLE ============ */
+  .table-wrap{overflow-x:auto;margin-top:4px;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{
+    text-align:left;padding:9px 8px;background:#f0f4f2;color:var(--ink);
+    font-weight:600;border-bottom:2px solid var(--line);font-size:11.5px;
+    text-transform:uppercase;letter-spacing:0.3px;
+  }
+  td{padding:8px;border-bottom:1px solid #eef2f0;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+  .status-badge{display:inline-block;padding:2px 10px;border-radius:2px;font-size:11px;font-weight:700;font-family:'Inter';text-transform:uppercase;letter-spacing:0.3px;}
+  .status-badge.green{background:#dcf0e3;color:#1e6b41;}
+  .status-badge.red{background:#f8d7da;color:#8f2532;}
+  .status-badge.yellow{background:#fbeecb;color:#8a6512;}
+  .photo-link{color:var(--teal);text-decoration:none;font-weight:600;font-size:12.5px;font-family:'Inter';}
+  .photo-link:hover{text-decoration:underline;}
+
+  /* ============ LOADING ============ */
+  .loading{text-align:center;padding:80px 20px;color:var(--muted);}
+  .loading .spinner{
+    display:inline-block;width:38px;height:38px;
+    border:3px solid #d7dfda;border-top-color:var(--teal);
+    border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:14px;
+  }
+  .hidden{display:none !important;}
+  .text-center{text-align:center;}
+  .text-muted{color:var(--muted);font-family:'Inter';}
+
+  footer{
+    text-align:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+    margin-top:30px;padding-bottom:10px;
+  }
+
+  @media (max-width:1000px){
+    .tank-row{grid-template-columns:repeat(3,1fr);}
+    .row{grid-template-columns:1fr;}
+  }
+  @media (max-width:600px){
+    .tank-row{grid-template-columns:repeat(2,1fr);}
+    .masthead h1{font-size:28px;}
+  }
+
+  /* ============ FLOATING PHOTO GALLERY REEL ============ */
+  .gallery-fab{
+    position:fixed; bottom:24px; right:24px; z-index:60;
+    width:56px; height:56px; border-radius:50%;
+    background:linear-gradient(160deg,var(--teal),var(--cyan));
+    border:none; color:#fff; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 18px rgba(13,36,56,0.28);
+    transition:transform 0.2s ease;
+  }
+  .gallery-fab:hover{transform:translateY(-2px) scale(1.03);}
+  .gallery-fab svg{width:23px;height:23px;}
+  .gallery-fab-badge{
+    position:absolute; top:-4px; right:-4px;
+    background:var(--amber); color:#2a1c00;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:700;
+    min-width:20px; height:20px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center; padding:0 5px;
+    border:2px solid var(--paper);
+  }
+
+  .gallery-panel{
+    position:fixed; bottom:24px; right:24px; z-index:59;
+    width:400px; max-width:calc(100vw - 32px);
+    max-height:0; opacity:0; pointer-events:none;
+    background:var(--card); border-radius:10px;
+    box-shadow:0 12px 34px rgba(13,36,56,0.24);
+    border:1px solid var(--line);
+    overflow:hidden;
+    transition:max-height 0.35s ease, opacity 0.25s ease, bottom 0.35s ease;
+    display:flex; flex-direction:column;
+  }
+  .gallery-panel.open{
+    max-height:400px; opacity:1; pointer-events:auto;
+    bottom:92px;
+  }
+  .gallery-header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px; background:linear-gradient(120deg,var(--ink),var(--teal));
+    color:#eaf2f4; flex-shrink:0;
+  }
+  .gallery-header h4{
+    font-family:'Barlow Condensed',sans-serif; text-transform:uppercase;
+    font-size:15px; letter-spacing:0.3px; font-weight:700;
+  }
+  .gallery-header .gallery-sub{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:#bcd8de;margin-top:2px;}
+  .gallery-header-actions{display:flex;align-items:center;gap:10px;}
+  .gallery-refresh, .gallery-close{
+    background:none;border:none;color:#eaf2f4;cursor:pointer;line-height:1;padding:2px 4px;
+  }
+  .gallery-refresh{font-size:14px;}
+  .gallery-close{font-size:18px;}
+  .reel-body{
+    display:flex; gap:10px; overflow-x:auto; overflow-y:hidden;
+    padding:14px; scroll-snap-type:x proximity;
+  }
+  .reel-item{ flex:0 0 110px; scroll-snap-align:start; cursor:pointer; }
+  .reel-item img{
+    width:110px; height:82px; object-fit:cover; border-radius:5px;
+    border:1px solid var(--line); display:block; background:#eef2f0;
+    transition:transform 0.2s ease, border-color 0.2s ease;
+  }
+  .reel-item:hover img{transform:scale(1.04); border-color:var(--teal);}
+  .reel-cap{
+    font-size:10px; color:var(--muted); margin-top:4px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .reel-msg{padding:20px 6px; font-size:12.5px; color:var(--muted); line-height:1.5; max-width:340px;}
+  .reel-msg.error{color:var(--danger);}
+
+  .lightbox{
+    display:none; position:fixed; inset:0; z-index:80;
+    background:rgba(10,20,26,0.92);
+    align-items:center; justify-content:center;
+    flex-direction:column;
+  }
+  .lightbox.show{display:flex;}
+  .lightbox img{max-width:88vw; max-height:74vh; border-radius:4px; box-shadow:0 10px 40px rgba(0,0,0,0.5);}
+  .lightbox-caption{color:#dce8ea; font-size:13px; margin-top:14px; text-align:center; max-width:70vw;}
+  .lightbox-counter{color:#8fb3ba; font-family:'IBM Plex Mono',monospace; font-size:11.5px; margin-top:6px;}
+  .lightbox-close{
+    position:absolute; top:22px; right:28px; background:none; border:none;
+    color:#eaf2f4; font-size:28px; cursor:pointer; line-height:1;
+  }
+  .lightbox-nav{
+    position:absolute; top:50%; transform:translateY(-50%);
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.25);
+    color:#eaf2f4; width:44px; height:44px; border-radius:50%;
+    font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  }
+  .lightbox-nav:hover{background:rgba(255,255,255,0.18);}
+  .lightbox-nav.prev{left:24px;}
+  .lightbox-nav.next{right:24px;}
+  .lightbox-open{
+    margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+    color:var(--amber); text-decoration:none; border-bottom:1px solid transparent;
+  }
+  .lightbox-open:hover{border-bottom-color:var(--amber);}
+
+  @media (max-width:600px){
+    .gallery-panel{width:calc(100vw - 32px);}
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <div class="mono">RETRIEVING FIELD DATA FROM OPERATIONS SHEET…</div>
+  </div>
+
+  <div id="dashboard" class="hidden">
+
+    <div class="masthead">
+      <div class="masthead-top">
+        <div>
+          <div class="eyebrow">Charaideo District · Public Health Engineering Department</div>
+          <h1>Nazira Flood Relief <span>Ops</span></h1>
+          <div class="desc">Live operational status across water supply, sanitation, and public health response to seasonal flooding.</div>
+        </div>
+        <div class="status-block">
+          <span class="status-flag" id="alertBadge"><span class="dot"></span>All Objectives Nominal</span>
+          <button class="refresh-btn" id="refreshBtn" onclick="handleManualRefresh()">
+            <span class="refresh-spinner" id="refreshSpinner" style="display:none;"></span>
+            <span id="refreshText">Refresh</span>
+          </button>
+          <div class="timestamp mono" id="lastUpdate">SYNCED —</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert-banner" id="criticalBanner">
+      ⚠ <span id="criticalText"></span>
+    </div>
+
+    <div class="section-head">
+      <span class="idx mono">OVERVIEW</span>
+      <h2>Mission Readiness</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="tank-row" id="tankRow"></div>
+
+    <!-- OBJECTIVE 1 -->
+    <div class="section-head">
+      <span class="idx mono">OBJ·01</span>
+      <h2>Safe Water Delivery</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--teal)">
+      <div class="obj-head">
+        <h3>Tankers, Schemes &amp; Dewatering</h3>
+        <span class="obj-target mono" id="obj1Target"></span>
+      </div>
+      <div class="stat-grid" id="obj1Stats"></div>
+    </div>
+
+    <!-- OBJECTIVE 2 -->
+    <div class="section-head">
+      <span class="idx mono">OBJ·02</span>
+      <h2>Water Quality &amp; Treatment</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--cyan)">
+      <div class="obj-head">
+        <h3>Chlorine Compliance &amp; Disinfection Supply</h3>
+        <span class="obj-target mono" id="obj2Target"></span>
+      </div>
+      <div class="row">
+        <div>
+          <div class="stat-grid" id="obj2Stats"></div>
+        </div>
+        <div class="gauge-container">
+          <div class="gauge-ring" id="gaugeRing">
+            <div class="inner"><span id="gaugeValue">0%</span><small>Pass Rate</small></div>
+          </div>
+          <div class="gauge-label" id="gaugeLabel">Residual chlorine 0.2–0.5 mg/L</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTIVE 3 -->
+    <div class="section-head">
+      <span class="idx mono">OBJ·03</span>
+      <h2>Sanitation &amp; Waste Management</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--green)">
+      <div class="obj-head">
+        <h3>Camp Sanitation &amp; Solid Waste</h3>
+        <span class="obj-target mono" id="obj3Target"></span>
+      </div>
+      <div class="stat-grid" id="obj3Stats"></div>
+    </div>
+
+    <!-- OBJECTIVE 4 -->
+    <div class="section-head">
+      <span class="idx mono">OBJ·04</span>
+      <h2>Community Outreach</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--amber)">
+      <div class="obj-head">
+        <h3>Awareness Campaigns &amp; Special Drives</h3>
+        <span class="obj-target mono" id="obj4Target"></span>
+      </div>
+      <div class="stat-grid" id="obj4Stats"></div>
+    </div>
+
+    <!-- OBJECTIVE 5 -->
+    <div class="section-head">
+      <span class="idx mono">OBJ·05</span>
+      <h2>Supply Chain Readiness</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--maroon)">
+      <div class="obj-head">
+        <h3>Chemical Inventory Buffer</h3>
+        <span class="obj-target mono" id="obj5Target"></span>
+      </div>
+      <div class="stat-grid" id="obj5Stats"></div>
+    </div>
+
+    <!-- CROSS-PROGRAM ACTIVITY -->
+    <div class="section-head">
+      <span class="idx mono">DATA</span>
+      <h2>Cross-Program Activity</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--ink)">
+      <div class="chart-wrapper">
+        <canvas id="activityChart"></canvas>
+      </div>
+    </div>
+
+    <!-- FIELD LOG -->
+    <div class="section-head">
+      <span class="idx mono">LOG</span>
+      <h2>Field Operations Log — Water Supply Team</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="obj-block" style="border-top-color:var(--teal)">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Tanker ID</th><th>Location</th><th>Qty (L)</th>
+              <th>Cl₂ (mg/L)</th><th>Status</th><th>Photo</th>
+            </tr>
+          </thead>
+          <tbody id="recentBody">
+            <tr><td colspan="7" class="text-center text-muted">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <footer>PHED NAZIRA · FLOOD RELIEF OPERATIONS · AUTO-REFRESHES EVERY 60S · DATA SOURCE: FIELD TEAM GOOGLE SHEET</footer>
+
+  </div>
+</div>
+
+<!-- ============ FLOATING PHOTO GALLERY REEL ============ -->
+<button class="gallery-fab" id="galleryFab" onclick="toggleGallery()" aria-label="Open field photo reel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+    <circle cx="12" cy="13" r="4"/>
+  </svg>
+  <span class="gallery-fab-badge" id="galleryFabCount">…</span>
+</button>
+
+<div class="gallery-panel" id="galleryPanel">
+  <div class="gallery-header">
+    <div>
+      <h4>Field Photo Reel</h4>
+      <div class="gallery-sub mono"><span id="galleryCount">…</span> photos · Drive folder</div>
+    </div>
+    <div class="gallery-header-actions">
+      <button class="gallery-refresh" onclick="fetchDrivePhotos()" title="Refresh photos">⟳</button>
+      <button class="gallery-close" onclick="toggleGallery()" title="Close">✕</button>
+    </div>
+  </div>
+  <div class="reel-body" id="reelBody">
+    <div class="reel-msg">Loading photos…</div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-nav prev" onclick="lightboxNav(-1)">‹</button>
+  <img id="lightboxImg" src="" alt="Field photo" />
+  <div class="lightbox-caption" id="lightboxCaption"></div>
+  <div class="lightbox-counter mono" id="lightboxCounter"></div>
+  <a class="lightbox-open" id="lightboxOpen" href="#" target="_blank">Open in Google Drive →</a>
+  <button class="lightbox-nav next" onclick="lightboxNav(1)">›</button>
+</div>
+
+<script>
+  const SPREADSHEET_ID = '1Upj1XdjpvFA7-nv55wBJyIIoZYEN4eKK9z9V0-KjwU0';
+  function getCsvUrl(gid){
+    const ts = Date.now();
+    return `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/export?format=csv&gid=${gid}&t=${ts}`;
+  }
+
+  const SHEET_GIDS = {
+    tanker:0, pwss:1088466229, dewater:363990335, handpump:1960957292,
+    bleach:154059151, tablets:1593210128, rwqt:1590245257, toilets:1839586464,
+    waste:514899035, campAware:1146697506, d2d:78612069, inventory:239099041,
+    bottle:709445909, special:1009661021
+  };
+
+  const TARGETS = {
+    tripsToday: 3, litersToday: 20000, pwssRestored: 5, dewaterCompleted: 5, handPumps: 10,
+    passRate: 95, rwqtTotal: 500, bleachTotal: 50, tabletsTotal: 5000,
+    funcToilets: 50, wasteAvailable: 30, bottlesTotal: 10000,
+    campAwareTotal: 1000, d2dTotal: 500, specialCount: 2,
+    inventoryDaysSafe: 7
+  };
+
+  function toNum(v){ return parseFloat(String(v).trim()) || 0; }
+  function toStr(v){ return String(v || '').trim(); }
+  function pct(value, target){ return target > 0 ? Math.max(0, Math.min(100, Math.round((value/target)*100))) : 0; }
+
+  function parseCSV(text){
+    const lines = text.split('\n').filter(l => l.trim() !== '');
+    return lines.map(line => {
+      const result = []; let current=''; let inQuotes=false;
+      for (let i=0;i<line.length;i++){
+        const ch=line[i];
+        if(ch==='"'){ inQuotes=!inQuotes; }
+        else if(ch===',' && !inQuotes){ result.push(current.trim()); current=''; }
+        else { current+=ch; }
+      }
+      result.push(current.trim());
+      return result;
+    });
+  }
+
+  async function fetchSheetCSV(gid){
+    const resp = await fetch(getCsvUrl(gid), { cache: 'no-store' });
+    if(!resp.ok) throw new Error(`Failed to fetch sheet (gid=${gid}): ${resp.status}`);
+    return parseCSV(await resp.text());
+  }
+
+  const WAVE_SVG = `<svg viewBox="0 0 200 16" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 8 Q 12.5 0 25 8 T 50 8 T 75 8 T 100 8 T 125 8 T 150 8 T 175 8 T 200 8 V16 H0 Z" fill="rgba(255,255,255,0.55)"/>
+  </svg>`;
+
+  function tankHTML(id, label, sub, color){
+    return `
+      <div class="tank-card">
+        <div class="tank">
+          <div class="tank-fill" id="fill-${id}" style="background:${color}">
+            <div style="position:absolute;top:-8px;left:0;width:200%;height:16px;animation:waveMove 3.2s linear infinite;">${WAVE_SVG}</div>
+          </div>
+        </div>
+        <div class="tank-pct" id="pct-${id}">0%</div>
+        <div class="tank-label">${label}</div>
+        <div class="tank-sub" id="sub-${id}">${sub}</div>
+      </div>`;
+  }
+
+  function setTank(id, value){
+    const fill = document.getElementById(`fill-${id}`);
+    const pctEl = document.getElementById(`pct-${id}`);
+    if(fill){ fill.style.height = value + '%'; }
+    if(pctEl){ pctEl.textContent = value + '%'; }
+  }
+
+  function statHTML(n, l, sub=''){
+    return `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
+  }
+
+  let chartInstance = null;
+
+  async function loadDashboard(){
+    try{
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+
+      const [tankerRows, pwssRows, dewaterRows, handpumpRows, bleachRows, tabletsRows,
+             rwqtRows, toiletsRows, wasteRows, campAwareRows, d2dRows, inventoryRows,
+             bottleRows, specialRows] = await Promise.all([
+        fetchSheetCSV(SHEET_GIDS.tanker), fetchSheetCSV(SHEET_GIDS.pwss), fetchSheetCSV(SHEET_GIDS.dewater),
+        fetchSheetCSV(SHEET_GIDS.handpump), fetchSheetCSV(SHEET_GIDS.bleach), fetchSheetCSV(SHEET_GIDS.tablets),
+        fetchSheetCSV(SHEET_GIDS.rwqt), fetchSheetCSV(SHEET_GIDS.toilets), fetchSheetCSV(SHEET_GIDS.waste),
+        fetchSheetCSV(SHEET_GIDS.campAware), fetchSheetCSV(SHEET_GIDS.d2d), fetchSheetCSV(SHEET_GIDS.inventory),
+        fetchSheetCSV(SHEET_GIDS.bottle), fetchSheetCSV(SHEET_GIDS.special)
+      ]);
+
+      const tankerData=tankerRows.slice(1), pwssData=pwssRows.slice(1), dewaterData=dewaterRows.slice(1),
+            handpumpData=handpumpRows.slice(1), bleachData=bleachRows.slice(1), tabletsData=tabletsRows.slice(1),
+            rwqtData=rwqtRows.slice(1), toiletsData=toiletsRows.slice(1), wasteData=wasteRows.slice(1),
+            campAwareData=campAwareRows.slice(1), d2dData=d2dRows.slice(1), inventoryData=inventoryRows.slice(1),
+            bottleData=bottleRows.slice(1), specialData=specialRows.slice(1);
+
+      const today = new Date().toISOString().slice(0,10);
+
+      const tripsTotal = tankerData.length;
+      const litersTotal = tankerData.reduce((s,r)=>s+toNum(r[1]),0);
+      const tripsToday = tankerData.filter(r => toStr(r[2]).startsWith(today)).length;
+      const litersToday = tankerData.filter(r => toStr(r[2]).startsWith(today)).reduce((s,r)=>s+toNum(r[1]),0);
+
+      const chlorineValues = tankerData.map(r=>toNum(r[4])).filter(v=>v>0 && v<10);
+      const passed = chlorineValues.filter(v=>v>=0.2 && v<=0.5);
+      const passRate = chlorineValues.length>0 ? Math.round((passed.length/chlorineValues.length)*100) : 0;
+
+      const pwssRestored = pwssData.filter(r=>toStr(r[4]).toLowerCase()==='restored').length;
+      const dewaterCompleted = dewaterData.filter(r=>toStr(r[4]).toLowerCase()==='completed').length;
+      const handPumpsTotal = handpumpData.reduce((s,r)=>s+toNum(r[1]),0);
+      const bleachTotal = bleachData.reduce((s,r)=>s+toNum(r[2]),0);
+      const tabletsTotal = tabletsData.reduce((s,r)=>s+toNum(r[2]),0);
+      const rwqtTotal = rwqtData.reduce((s,r)=>s+toNum(r[2]),0);
+      const funcToilets = toiletsData.filter(r=>toStr(r[3]).toLowerCase()==='functional').length;
+      const wasteAvailable = wasteData.filter(r=>toStr(r[3]).toLowerCase()==='available').length;
+      const campAwareTotal = campAwareData.reduce((s,r)=>s+toNum(r[3]),0);
+      const d2dTotal = d2dData.reduce((s,r)=>s+toNum(r[2]),0);
+      const daysLeft = inventoryData.map(r=>toNum(r[1])).filter(v=>v>0);
+      const minDays = daysLeft.length ? Math.min(...daysLeft) : 99;
+      const bottlesTotal = bottleData.reduce((s,r)=>s+toNum(r[3]),0);
+      const specialCount = specialData.length;
+      const recent = tankerData.slice(-10).reverse();
+
+      const obj1 = Math.round((pct(tripsTotal,TARGETS.tripsToday*30)+pct(litersTotal,TARGETS.litersToday*30)+
+                    pct(pwssRestored,TARGETS.pwssRestored)+pct(dewaterCompleted,TARGETS.dewaterCompleted)+
+                    pct(handPumpsTotal,TARGETS.handPumps))/5);
+      const obj2 = Math.round((pct(passRate,TARGETS.passRate)+pct(rwqtTotal,TARGETS.rwqtTotal)+
+                    pct(bleachTotal,TARGETS.bleachTotal)+pct(tabletsTotal,TARGETS.tabletsTotal))/4);
+      const obj3 = Math.round((pct(funcToilets,TARGETS.funcToilets)+pct(wasteAvailable,TARGETS.wasteAvailable)+
+                    pct(bottlesTotal,TARGETS.bottlesTotal))/3);
+      const obj4 = Math.round((pct(campAwareTotal,TARGETS.campAwareTotal)+pct(d2dTotal,TARGETS.d2dTotal)+
+                    pct(specialCount,TARGETS.specialCount))/3);
+      const obj5 = minDays===99 ? 100 : Math.round(Math.min(100,(minDays/TARGETS.inventoryDaysSafe)*100));
+      const overall = Math.round((obj1+obj2+obj3+obj4+obj5)/5);
+
+      const tankRow = document.getElementById('tankRow');
+      tankRow.innerHTML =
+        `<div class="tank-card overall">
+           <div class="tank">
+             <div class="tank-fill" id="fill-overall" style="background:linear-gradient(180deg,#3ddc84,#1f9d5f)">
+               <div style="position:absolute;top:-8px;left:0;width:200%;height:16px;animation:waveMove 3.2s linear infinite;">${WAVE_SVG}</div>
+             </div>
+           </div>
+           <div class="tank-pct" id="pct-overall">0%</div>
+           <div class="tank-label">Mission Index</div>
+           <div class="tank-sub">Composite readiness</div>
+         </div>` +
+        tankHTML('obj1','Water Delivery','Obj·01','#14506b') +
+        tankHTML('obj2','Water Quality','Obj·02','#1f7a99') +
+        tankHTML('obj3','Sanitation','Obj·03','#2f8f5b') +
+        tankHTML('obj4','Outreach','Obj·04','#c9902e') +
+        tankHTML('obj5','Supply Buffer','Obj·05','#8f3b3b');
+
+      setTank('overall', overall); setTank('obj1', obj1); setTank('obj2', obj2);
+      setTank('obj3', obj3); setTank('obj4', obj4); setTank('obj5', obj5);
+
+      const badge = document.getElementById('alertBadge');
+      const banner = document.getElementById('criticalBanner');
+      const criticalText = document.getElementById('criticalText');
+      const criticalIssues = [];
+      if(minDays < 3) criticalIssues.push(`chemical inventory critical — ${minDays===99?'no data':minDays+' day(s)'} of buffer remaining`);
+      if(passRate < 70 && chlorineValues.length>0) criticalIssues.push(`water quality pass rate low — ${passRate}% within safe chlorine range`);
+
+      if(criticalIssues.length){
+        badge.innerHTML = '<span class="dot"></span>Critical Attention Required';
+        badge.className = 'status-flag critical';
+        banner.className = 'alert-banner show';
+        criticalText.textContent = criticalIssues.join(' · ');
+      } else {
+        badge.innerHTML = '<span class="dot"></span>All Objectives Nominal';
+        badge.className = 'status-flag';
+        banner.className = 'alert-banner';
+      }
+
+      document.getElementById('obj1Stats').innerHTML =
+        statHTML(tripsTotal, 'Total Tanker Trips', `Today: ${tripsToday}`) +
+        statHTML(litersTotal.toLocaleString(), 'Total Liters Delivered', `Today: ${litersToday.toLocaleString()}`) +
+        statHTML(pwssRestored, 'PWSS Schemes Restored', 'Cumulative') +
+        statHTML(dewaterCompleted, 'Pump Houses Dewatered', 'Cumulative') +
+        statHTML(handPumpsTotal, 'Hand Pumps Repaired', 'Cumulative');
+      document.getElementById('obj1Target').textContent = `TARGET: ${(TARGETS.tripsToday*30).toLocaleString()} TRIPS/MONTH`;
+
+      document.getElementById('obj2Stats').innerHTML =
+        statHTML(rwqtTotal, 'RWQT Samples Tested', 'Cumulative') +
+        statHTML(bleachTotal.toLocaleString(), 'Bleaching Powder (Kg)', 'Cumulative') +
+        statHTML(tabletsTotal.toLocaleString(), 'Disinfection Tablets', 'Cumulative');
+      document.getElementById('obj2Target').textContent = `TARGET: ${TARGETS.passRate}% PASS RATE`;
+
+      document.getElementById('obj3Stats').innerHTML =
+        statHTML(funcToilets, 'Functional Toilets', 'Cumulative') +
+        statHTML(wasteAvailable, 'Camps w/ Waste Mgmt', 'Cumulative') +
+        statHTML(bottlesTotal.toLocaleString(), 'Bottles Collected (Kg)', 'Cumulative');
+      document.getElementById('obj3Target').textContent = `TARGET: ${TARGETS.funcToilets} TOILETS · ${TARGETS.wasteAvailable} CAMPS`;
+
+      document.getElementById('obj4Stats').innerHTML =
+        statHTML(campAwareTotal.toLocaleString(), 'Camp Awareness Reach', 'Cumulative') +
+        statHTML(d2dTotal.toLocaleString(), 'Door-to-Door Households', 'Cumulative') +
+        statHTML(specialCount, 'Special Drives Conducted', 'Cumulative');
+      document.getElementById('obj4Target').textContent = `TARGET: ${TARGETS.campAwareTotal.toLocaleString()} PEOPLE`;
+
+      document.getElementById('obj5Stats').innerHTML =
+        statHTML(minDays===99?'∞':minDays, 'Lowest Stock (Days Left)', 'Current buffer');
+      document.getElementById('obj5Target').textContent = `SAFE BUFFER: ${TARGETS.inventoryDaysSafe}+ DAYS`;
+
+      document.getElementById('gaugeValue').textContent = passRate + '%';
+      const gcolor = passRate>=90 ? '#2f8f5b' : (passRate>=70 ? '#c9902e' : '#b72f3d');
+      document.getElementById('gaugeRing').style.background =
+        `conic-gradient(${gcolor} 0% ${passRate}%, #e4eae7 ${passRate}% 100%)`;
+      document.getElementById('gaugeLabel').textContent =
+        `${chlorineValues.length} samples tested · ${passed.length} within 0.2–0.5 mg/L`;
+
+      const ctx = document.getElementById('activityChart').getContext('2d');
+      if(chartInstance) chartInstance.destroy();
+      const chartLabels = ['Trips','Liters(÷1k)','PWSS','Dewater','Hand Pumps','Bleach(Kg)','Tablets','RWQT',
+                            'Toilets','Waste Camps','Camp Aware','D2D HH','Bottles(Kg)','Special Drives'];
+      chartInstance = new Chart(ctx, {
+        type:'bar',
+        data:{
+          labels: chartLabels,
+          datasets:[{
+            label:'Program Activity (Cumulative)',
+            data:[tripsTotal, litersTotal/1000, pwssRestored, dewaterCompleted, handPumpsTotal,
+                  bleachTotal, tabletsTotal, rwqtTotal, funcToilets, wasteAvailable,
+                  campAwareTotal, d2dTotal, bottlesTotal, specialCount],
+            backgroundColor:'#14506b',
+            borderRadius:3
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false} },
+          scales:{ y:{ beginAtZero:true, grid:{color:'#eef2ef'} }, x:{ grid:{display:false} } }
+        }
+      });
+
+      const tbody = document.getElementById('recentBody');
+      tbody.innerHTML = '';
+      if(recent.length===0){
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No entries yet</td></tr>';
+      } else {
+        recent.forEach(r=>{
+          const date=toStr(r[2]), tanker=toStr(r[0]), loc=toStr(r[3]), qty=toNum(r[1]),
+                chlor=toNum(r[4]), photo=toStr(r[5]);
+          let status='—', cls='';
+          if(chlor>0){
+            if(chlor>=0.2 && chlor<=0.5){ status='Safe'; cls='green'; }
+            else if(chlor>0.5){ status='High'; cls='yellow'; }
+            else { status='Low'; cls='red'; }
+          }
+          let photoHtml = '—';
+          if(photo && photo.startsWith('http')){
+            photoHtml = `<a href="${photo}" target="_blank" class="photo-link">View →</a>`;
+          }
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${date}</td><td>${tanker}</td><td>${loc}</td><td>${qty.toLocaleString()}</td>
+            <td>${chlor>0?chlor.toFixed(2):'—'}</td><td><span class="status-badge ${cls}">${status}</span></td><td>${photoHtml}</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      document.getElementById('lastUpdate').textContent = `SYNCED ${new Date().toLocaleString()}`;
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      document.getElementById('refreshBtn').classList.remove('loading');
+      document.getElementById('refreshSpinner').style.display = 'none';
+      document.getElementById('refreshText').textContent = 'Refresh';
+
+    } catch(err){
+      document.getElementById('loading').innerHTML = `
+        <div style="color:#b72f3d;font-size:18px;margin-bottom:10px;font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;">Error Loading Data</div>
+        <div class="text-muted" style="max-width:480px;margin:0 auto;margin-bottom:14px;">${err.message}</div>
+        <div style="margin-top:14px;font-size:13px;color:#5b6b66;text-align:left;display:inline-block;">
+          Please check:<br>
+          1. The sheet is shared publicly (File → Share → Anyone with the link).<br>
+          2. You are connected to the internet.<br>
+          3. Each tab has at least a header row.<br><br>
+          <button class="refresh-btn" onclick="handleManualRefresh()" style="background:#14506b;color:#fff;border:1px solid #14506b;">Retry</button>
+        </div>`;
+      console.error(err);
+      document.getElementById('refreshBtn').classList.remove('loading');
+      document.getElementById('refreshSpinner').style.display = 'none';
+      document.getElementById('refreshText').textContent = 'Refresh';
+    }
+  }
+
+  function handleManualRefresh(){
+    document.getElementById('refreshBtn').classList.add('loading');
+    document.getElementById('refreshSpinner').style.display = 'inline-block';
+    document.getElementById('refreshText').textContent = ' Syncing...';
+    loadDashboard();
+  }
+
+  loadDashboard();
+  setInterval(loadDashboard, 60000);
+
+  // ================================================================
+  //  FLOATING PHOTO GALLERY — Google Drive folder
+  // ================================================================
+  // Paste a Google Cloud API key with the "Google Drive API" enabled below.
+  // The folder must be shared as "Anyone with the link — Viewer" for this
+  // key-only (no OAuth) approach to be able to list and load its images.
+  const GDRIVE_API_KEY = 'YOUR_GOOGLE_API_KEY';
+  const GDRIVE_FOLDER_ID = '1kdjBp0dBtJHoTd0vUHvA4RUwRe2RceTm';
+
+  let galleryPhotos = [];
+  let galleryIndex = 0;
+
+  function driveThumb(id, size){
+    return `https://drive.google.com/thumbnail?id=${id}&sz=w${size}`;
+  }
+
+  function toggleGallery(){
+    document.getElementById('galleryPanel').classList.toggle('open');
+  }
+
+  async function fetchDrivePhotos(){
+    const reelBody = document.getElementById('reelBody');
+    const countEl = document.getElementById('galleryCount');
+    const fabCountEl = document.getElementById('galleryFabCount');
+    try{
+      if(!GDRIVE_API_KEY || GDRIVE_API_KEY === 'YOUR_GOOGLE_API_KEY'){
+        reelBody.innerHTML = `<div class="reel-msg">Add a Google API key (with the Drive API enabled) to the <span class="mono">GDRIVE_API_KEY</span> constant near the bottom of this file to load photos from this folder. The folder also needs to be shared as "Anyone with the link".</div>`;
+        countEl.textContent = '–';
+        fabCountEl.textContent = '!';
+        return;
+      }
+      const q = encodeURIComponent(`'${GDRIVE_FOLDER_ID}' in parents and mimeType contains 'image/' and trashed = false`);
+      const fields = encodeURIComponent('files(id,name,createdTime)');
+      const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&orderBy=createdTime desc&pageSize=1000&key=${GDRIVE_API_KEY}`;
+      const resp = await fetch(url);
+      if(!resp.ok) throw new Error(`Drive API responded ${resp.status}`);
+      const data = await resp.json();
+      galleryPhotos = data.files || [];
+      renderReel();
+    } catch(err){
+      reelBody.innerHTML = `<div class="reel-msg error">Could not load the photo folder — ${err.message}</div>`;
+      countEl.textContent = '!';
+      fabCountEl.textContent = '!';
+      console.error(err);
+    }
+  }
+
+  function renderReel(){
+    const reelBody = document.getElementById('reelBody');
+    document.getElementById('galleryCount').textContent = galleryPhotos.length;
+    document.getElementById('galleryFabCount').textContent = galleryPhotos.length;
+    if(galleryPhotos.length === 0){
+      reelBody.innerHTML = '<div class="reel-msg">No photos found in this folder yet.</div>';
+      return;
+    }
+    reelBody.innerHTML = galleryPhotos.map((p, i) => `
+      <div class="reel-item" onclick="openLightbox(${i})">
+        <img src="${driveThumb(p.id, 300)}" alt="${p.name}" loading="lazy" />
+        <div class="reel-cap">${p.name}</div>
+      </div>
+    `).join('');
+  }
+
+  function openLightbox(i){
+    galleryIndex = i;
+    updateLightbox();
+    document.getElementById('lightbox').classList.add('show');
+  }
+
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('show');
+  }
+
+  function lightboxNav(dir){
+    if(galleryPhotos.length === 0) return;
+    galleryIndex = (galleryIndex + dir + galleryPhotos.length) % galleryPhotos.length;
+    updateLightbox();
+  }
+
+  function updateLightbox(){
+    const p = galleryPhotos[galleryIndex];
+    if(!p) return;
+    document.getElementById('lightboxImg').src = driveThumb(p.id, 1600);
+    document.getElementById('lightboxCaption').textContent =
+      p.name + (p.createdTime ? ' · ' + new Date(p.createdTime).toLocaleDateString() : '');
+    document.getElementById('lightboxCounter').textContent = `${galleryIndex + 1} / ${galleryPhotos.length}`;
+    document.getElementById('lightboxOpen').href = `https://drive.google.com/file/d/${p.id}/view`;
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const lb = document.getElementById('lightbox');
+    if(!lb.classList.contains('show')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowRight') lightboxNav(1);
+    if(e.key === 'ArrowLeft') lightboxNav(-1);
+  });
+
+  fetchDrivePhotos();
+  setInterval(fetchDrivePhotos, 180000);
+</script>
+
+</body>
+</html>
