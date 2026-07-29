@@ -625,22 +625,6 @@
         fetchSheetCSV(SHEET_GIDS.bottle), fetchSheetCSV(SHEET_GIDS.special)
       ]);
 
-      // Log headers for debugging
-      console.log('Sheet Headers:');
-      console.log('Tanker:', tankerRows[0]);
-      console.log('PWSS:', pwssRows[0]);
-      console.log('Dewater:', dewaterRows[0]);
-      console.log('Handpump:', handpumpRows[0]);
-      console.log('Bleach:', bleachRows[0]);
-      console.log('Tablets:', tabletsRows[0]);
-      console.log('RWQT:', rwqtRows[0]);
-      console.log('Toilets:', toiletsRows[0]);
-      console.log('Waste:', wasteRows[0]);
-      console.log('CampAware:', campAwareRows[0]);
-      console.log('D2D:', d2dRows[0]);
-      console.log('Bottle:', bottleRows[0]);
-      console.log('Special:', specialRows[0]);
-
       const tankerData=tankerRows.slice(1), pwssData=pwssRows.slice(1), dewaterData=dewaterRows.slice(1),
             handpumpData=handpumpRows.slice(1), bleachData=bleachRows.slice(1), tabletsData=tabletsRows.slice(1),
             rwqtData=rwqtRows.slice(1), toiletsData=toiletsRows.slice(1), wasteData=wasteRows.slice(1),
@@ -649,7 +633,6 @@
 
       const today = new Date().toISOString().slice(0,10);
 
-      // Helper to find date column by searching for date-like values
       function findDateCol(rows) {
         if(rows.length === 0) return 0;
         const firstRow = rows[0];
@@ -657,7 +640,7 @@
           const val = toStr(firstRow[i]).toLowerCase();
           if(val.includes('date') || val.includes('tanggal') || val.includes('तारीख')) return i;
         }
-        return 0; // Default to first column
+        return 0;
       }
 
       const dateColMap = {
@@ -676,12 +659,10 @@
         special: findDateCol(specialRows)
       };
 
-      console.log('Date Column Map:', dateColMap);
-
       const tripsTotal = tankerData.length;
-      const litersTotal = tankerData.reduce((s,r)=>s+toNum(r[3]),0);
+      const litersTotal = tankerData.reduce((s,r)=>s+toNum(r[1]),0);
       const tripsToday = tankerData.filter(r => toStr(r[dateColMap.tanker]).startsWith(today)).length;
-      const litersToday = tankerData.filter(r => toStr(r[dateColMap.tanker]).startsWith(today)).reduce((s,r)=>s+toNum(r[3]),0);
+      const litersToday = tankerData.filter(r => toStr(r[dateColMap.tanker]).startsWith(today)).reduce((s,r)=>s+toNum(r[1]),0);
 
       const chlorineValues = tankerData.map(r=>toNum(r[4])).filter(v=>v>0 && v<10);
       const passed = chlorineValues.filter(v=>v>=0.2 && v<=0.5);
@@ -693,7 +674,7 @@
       const bleachTotal = bleachData.reduce((s,r)=>s+toNum(r[2]),0);
       const tabletsTotal = tabletsData.reduce((s,r)=>s+toNum(r[2]),0);
       const rwqtTotal = rwqtData.reduce((s,r)=>s+toNum(r[2]),0);
-      const funcToilets = toiletsData.filter(r=>toStr(r[3]).toLowerCase()==='functional').length;
+      const funcToilets = toiletsData.length;
       const wasteAvailable = wasteData.filter(r=>toStr(r[3]).toLowerCase()==='managed').length;
       const campAwareTotal = campAwareData.reduce((s,r)=>s+toNum(r[3]),0);
       const d2dTotal = d2dData.reduce((s,r)=>s+toNum(r[2]),0);
@@ -714,8 +695,8 @@
 
       // Program 1: Water Tanker Supply
       document.getElementById('prog1Stats').innerHTML =
-        statHTML(tripsTotal, 'Total Tanker Trips', `Today: ${tripsToday}`) +
-        statHTML(litersTotal.toLocaleString(), 'Total Liters Delivered', `Today: ${litersToday.toLocaleString()}`) +
+        statHTML(tripsTotal, 'Total Tanker Trips', 'Cumulative') +
+        statHTML(litersTotal.toLocaleString(), 'Total Liters Delivered', 'Cumulative') +
         statHTML(passRate + '%', 'Water Quality Pass Rate', 'Chlorine 0.2-0.5 mg/L');
       document.getElementById('prog1Target').textContent = `TARGET: ${(TARGETS.tripsToday*30).toLocaleString()} TRIPS/MONTH`;
 
@@ -747,7 +728,7 @@
       // Program 7: Water Quality Testing
       document.getElementById('prog7Stats').innerHTML =
         statHTML(rwqtTotal, 'Samples Tested', 'Cumulative') +
-        statHTML(passed.length, 'Within Safe Range', `of ${chlorineValues.length} tested`);
+        statHTML(passed.length, 'Within Safe Range (including Tank Supply)', `of ${chlorineValues.length} tested`);
       document.getElementById('prog7Target').textContent = `TARGET: ${TARGETS.rwqtTotal} SAMPLES`;
 
       // Program 8: Emergency Toilets
@@ -771,8 +752,13 @@
       document.getElementById('prog11Target').textContent = `TARGET: ${TARGETS.d2dTotal.toLocaleString()} HH`;
 
       // Program 12: Special Drives
+      const sanitizationDrives = specialData.filter(r => toStr(r[0]).toLowerCase().includes('sanitization')).length;
+      const openMikingDrives = specialData.filter(r => toStr(r[0]).toLowerCase().includes('open mik')).length;
+      
       document.getElementById('prog12Stats').innerHTML =
-        statHTML(specialCount, 'Drives Conducted', 'Cumulative');
+        statHTML(sanitizationDrives, 'Sanitization Drives', 'Cumulative') +
+        statHTML(openMikingDrives, 'Open Miking Events', 'Cumulative') +
+        statHTML(specialCount, 'Total Initiatives', 'All drives combined');
       document.getElementById('prog12Target').textContent = `TARGET: ${TARGETS.specialCount} DRIVES`;
 
       // Program 13: Bottle Collection
@@ -803,7 +789,6 @@
         banner.className = 'alert-banner';
       }
 
-      // Build unified operations log using detected date columns
       let allLogEntries = [];
       
       tankerData.forEach(r=>{
