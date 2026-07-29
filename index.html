@@ -810,8 +810,8 @@
         allLogEntries.push({
           date: toStr(r[dateColMap.tanker]),
           program: 'Water Tanker',
-          details: `Tanker ${toStr(r[1])} → ${toStr(r[2])}`,
-          value: toNum(r[3]).toLocaleString() + ' L',
+          details: toStr(r[3]),
+          value: toNum(r[1]).toLocaleString(),
           status: (v=>v>0?(v>=0.2 && v<=0.5?'Safe':v>0.5?'High':'Low'):'—')(toNum(r[4])),
           statusClass: (v=>v>0?(v>=0.2 && v<=0.5?'green':v>0.5?'yellow':'red'):'')(toNum(r[4])),
           photo: toStr(r[5]),
@@ -977,7 +977,7 @@
       specialData.forEach(r=>{
         allLogEntries.push({
           date: toStr(r[dateColMap.special]),
-          program: 'Special Drive',
+          program: toStr(r[0]),
           details: toStr(r[1]),
           value: toStr(r[2]),
           status: 'Active',
