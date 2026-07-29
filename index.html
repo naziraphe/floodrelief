@@ -182,67 +182,8 @@
     flex:1;height:1px;background:var(--line);
   }
 
-  /* ============ OBJECTIVE TANKS (signature element) ============ */
-  .tank-row{
-    display:grid;
-    grid-template-columns:1.3fr repeat(5,1fr);
-    gap:14px;
-    margin-bottom:8px;
-  }
-  .tank-card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:6px;
-    padding:16px 14px 14px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    box-shadow:0 1px 3px rgba(13,36,56,0.05);
-  }
-  .tank-card.overall{
-    background:linear-gradient(160deg,var(--ink),var(--teal));
-    color:#e9f2f4;
-    border:none;
-  }
-  .tank{
-    position:relative;
-    width:64px;height:110px;
-    border-radius:8px 8px 4px 4px;
-    background:#eef2f0;
-    overflow:hidden;
-    border:2px solid rgba(13,36,56,0.12);
-  }
-  .tank-card.overall .tank{border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);}
-  .tank-fill{
-    position:absolute;
-    bottom:0;left:0;right:0;
-    height:0%;
-    transition:height 1s cubic-bezier(.4,0,.2,1);
-  }
-  .tank-fill svg{position:absolute;top:-9px;left:0;width:200%;height:16px;animation:waveMove 3.2s linear infinite;}
-  .tank-fill .body-fill{position:absolute;top:6px;left:0;right:0;bottom:0;}
-  @keyframes waveMove{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-  .tank-pct{
-    font-family:'Barlow Condensed',sans-serif;
-    font-weight:700;
-    font-size:19px;
-    margin-top:10px;
-  }
-  .tank-label{
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.4px;
-    color:var(--muted);
-    text-align:center;
-    margin-top:2px;
-    font-weight:600;
-  }
-  .tank-card.overall .tank-label{color:#bcd8de;}
-  .tank-sub{font-size:10.5px;color:var(--muted);margin-top:2px;}
-  .tank-card.overall .tank-sub{color:#9dc4ca;}
-
-  /* ============ OBJECTIVE DETAIL BLOCKS ============ */
-  .obj-block{
+  /* ============ PROGRAM CARDS ============ */
+  .program-card{
     background:var(--card);
     border:1px solid var(--line);
     border-radius:6px;
@@ -250,18 +191,18 @@
     margin-bottom:16px;
     border-top:4px solid var(--teal);
   }
-  .obj-block .obj-head{
+  .program-card .prog-head{
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
     margin-bottom:14px;
   }
-  .obj-block .obj-head h3{
+  .program-card .prog-head h3{
     font-family:'Barlow Condensed',sans-serif;
     font-size:19px;
     font-weight:700;
     text-transform:uppercase;
     letter-spacing:0.3px;
   }
-  .obj-block .obj-target{
+  .program-card .prog-target{
     font-family:'IBM Plex Mono',monospace;
     font-size:11.5px;
     color:var(--muted);
@@ -280,24 +221,6 @@
   .stat .n{font-family:'Barlow Condensed',sans-serif;font-size:25px;font-weight:700;color:var(--ink);}
   .stat .l{font-size:11px;text-transform:uppercase;letter-spacing:0.3px;color:var(--muted);font-weight:600;margin-top:2px;}
   .stat .sub{font-size:9px;color:#999;margin-top:4px;font-style:italic;}
-
-  /* ============ ROW: CHART + GAUGE ============ */
-  .row{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:14px;}
-  .chart-wrapper{position:relative;height:250px;}
-  .gauge-container{display:flex;flex-direction:column;align-items:center;justify-content:center;height:230px;}
-  .gauge-ring{
-    width:150px;height:150px;border-radius:50%;
-    background:conic-gradient(var(--green) 0% 0%, #e4eae7 0% 100%);
-    display:flex;align-items:center;justify-content:center;
-    transition:background 0.6s ease;
-  }
-  .gauge-ring .inner{
-    width:112px;height:112px;border-radius:50%;background:#fff;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:30px;color:var(--ink);
-  }
-  .gauge-ring .inner small{font-family:'Inter';font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;}
-  .gauge-label{margin-top:10px;font-size:12.5px;color:var(--muted);text-align:center;max-width:220px;}
 
   /* ============ TABLE ============ */
   .table-wrap{overflow-x:auto;margin-top:4px;}
@@ -320,7 +243,7 @@
     body{padding:0;background:#fff;}
     .masthead, .alert-banner, .btn-group, .status-block, .refresh-btn, .action-btn, .section-head .rule{display:none;}
     .container{max-width:100%;}
-    .obj-block, .tank-card{page-break-inside:avoid;}
+    .program-card{page-break-inside:avoid;}
     .print-only{display:block !important;}
   }
   .print-only{display:none;}
@@ -342,13 +265,11 @@
   }
 
   @media (max-width:1000px){
-    .tank-row{grid-template-columns:repeat(3,1fr);}
     .row{grid-template-columns:1fr;}
     .btn-group{width:100%;}
     .action-btn{flex:1;justify-content:center;}
   }
   @media (max-width:600px){
-    .tank-row{grid-template-columns:repeat(2,1fr);}
     .masthead h1{font-size:28px;}
     .btn-group{flex-direction:column;}
     .action-btn{width:100%;}
@@ -371,10 +292,10 @@
         <div>
           <div class="eyebrow">Charaideo District · Public Health Engineering Department</div>
           <h1>Nazira Flood Relief <span>Ops</span></h1>
-          <div class="desc">Live operational status across water supply, sanitation, and public health response to seasonal flooding.</div>
+          <div class="desc">Live operational status grouped by individual programs for granular tracking.</div>
         </div>
         <div class="status-block">
-          <span class="status-flag" id="alertBadge"><span class="dot"></span>All Objectives Nominal</span>
+          <span class="status-flag" id="alertBadge"><span class="dot"></span>All Programs Active</span>
           <div class="btn-group">
             <a href="https://script.google.com/macros/s/AKfycbz88aOza0xOHegdcK1Qh2Ug34SoG6-LvKRNjy2q0lor0Mt0kI2wdDXLu8nqPHmnXZyL/exec" target="_blank" class="action-btn entry">📝 Field Entry</a>
             <button class="action-btn" id="reportBtn" onclick="generateReport()">📄 Print Report</button>
@@ -392,124 +313,241 @@
       ⚠ <span id="criticalText"></span>
     </div>
 
+    <!-- WATER TANKER SUPPLY -->
     <div class="section-head">
-      <span class="idx mono">OVERVIEW</span>
-      <h2>Mission Readiness</h2>
+      <span class="idx mono">PROG·01</span>
+      <h2>Water Tanker Supply</h2>
       <div class="rule"></div>
     </div>
-    <div class="tank-row" id="tankRow"></div>
+    <div class="program-card" style="border-top-color:var(--teal)">
+      <div class="prog-head">
+        <h3>Daily Emergency Water Distribution</h3>
+        <span class="prog-target mono" id="prog1Target"></span>
+      </div>
+      <div class="stat-grid" id="prog1Stats"></div>
+    </div>
 
-    <!-- OBJECTIVE 1 -->
+    <!-- PWSS RESTORATION -->
     <div class="section-head">
-      <span class="idx mono">OBJ·01</span>
-      <h2>Safe Water Delivery</h2>
+      <span class="idx mono">PROG·02</span>
+      <h2>PWSS Scheme Restoration</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--teal)">
-      <div class="obj-head">
-        <h3>Tankers, Schemes &amp; Dewatering</h3>
-        <span class="obj-target mono" id="obj1Target"></span>
+    <div class="program-card" style="border-top-color:var(--cyan)">
+      <div class="prog-head">
+        <h3>Piped Water Supply Systems Recovery</h3>
+        <span class="prog-target mono" id="prog2Target"></span>
       </div>
-      <div class="stat-grid" id="obj1Stats"></div>
+      <div class="stat-grid" id="prog2Stats"></div>
     </div>
 
-    <!-- OBJECTIVE 2 -->
+    <!-- DEWATERING OPERATIONS -->
     <div class="section-head">
-      <span class="idx mono">OBJ·02</span>
-      <h2>Water Quality &amp; Treatment</h2>
+      <span class="idx mono">PROG·03</span>
+      <h2>Pump House Dewatering</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--cyan)">
-      <div class="obj-head">
-        <h3>Chlorine Compliance &amp; Disinfection Supply</h3>
-        <span class="obj-target mono" id="obj2Target"></span>
+    <div class="program-card" style="border-top-color:var(--green)">
+      <div class="prog-head">
+        <h3>Critical Infrastructure Dewatering</h3>
+        <span class="prog-target mono" id="prog3Target"></span>
       </div>
-      <div class="row">
-        <div>
-          <div class="stat-grid" id="obj2Stats"></div>
-        </div>
-        <div class="gauge-container">
-          <div class="gauge-ring" id="gaugeRing">
-            <div class="inner"><span id="gaugeValue">0%</span><small>Pass Rate</small></div>
-          </div>
-          <div class="gauge-label" id="gaugeLabel">Residual chlorine 0.2–0.5 mg/L</div>
-        </div>
-      </div>
+      <div class="stat-grid" id="prog3Stats"></div>
     </div>
 
-    <!-- OBJECTIVE 3 -->
+    <!-- HAND PUMP REPAIRS -->
     <div class="section-head">
-      <span class="idx mono">OBJ·03</span>
-      <h2>Sanitation &amp; Waste Management</h2>
+      <span class="idx mono">PROG·04</span>
+      <h2>Hand Pump Repairs</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--green)">
-      <div class="obj-head">
-        <h3>Camp Sanitation &amp; Solid Waste</h3>
-        <span class="obj-target mono" id="obj3Target"></span>
+    <div class="program-card" style="border-top-color:var(--amber)">
+      <div class="prog-head">
+        <h3>Community Water Access Restoration</h3>
+        <span class="prog-target mono" id="prog4Target"></span>
       </div>
-      <div class="stat-grid" id="obj3Stats"></div>
+      <div class="stat-grid" id="prog4Stats"></div>
     </div>
 
-    <!-- OBJECTIVE 4 -->
+    <!-- BLEACH DISTRIBUTION -->
     <div class="section-head">
-      <span class="idx mono">OBJ·04</span>
-      <h2>Community Outreach</h2>
+      <span class="idx mono">PROG·05</span>
+      <h2>Bleach Supply & Distribution</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--amber)">
-      <div class="obj-head">
-        <h3>Awareness Campaigns &amp; Special Drives</h3>
-        <span class="obj-target mono" id="obj4Target"></span>
+    <div class="program-card" style="border-top-color:#d9534f">
+      <div class="prog-head">
+        <h3>Chemical Disinfection Supply Chain</h3>
+        <span class="prog-target mono" id="prog5Target"></span>
       </div>
-      <div class="stat-grid" id="obj4Stats"></div>
+      <div class="stat-grid" id="prog5Stats"></div>
     </div>
 
-    <!-- OBJECTIVE 5 -->
+    <!-- TABLET DISTRIBUTION -->
     <div class="section-head">
-      <span class="idx mono">OBJ·05</span>
-      <h2>Supply Chain Readiness</h2>
+      <span class="idx mono">PROG·06</span>
+      <h2>Disinfection Tablets Supply</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--maroon)">
-      <div class="obj-head">
-        <h3>Chemical Inventory Buffer</h3>
-        <span class="obj-target mono" id="obj5Target"></span>
+    <div class="program-card" style="border-top-color:#8f3b3b">
+      <div class="prog-head">
+        <h3>Portable Water Disinfection Support</h3>
+        <span class="prog-target mono" id="prog6Target"></span>
       </div>
-      <div class="stat-grid" id="obj5Stats"></div>
+      <div class="stat-grid" id="prog6Stats"></div>
     </div>
 
-    <!-- CROSS-PROGRAM ACTIVITY -->
+    <!-- WATER QUALITY TESTING -->
     <div class="section-head">
-      <span class="idx mono">DATA</span>
-      <h2>Cross-Program Activity</h2>
+      <span class="idx mono">PROG·07</span>
+      <h2>Water Quality Testing (RWQT)</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--ink)">
-      <div class="chart-wrapper">
-        <canvas id="activityChart"></canvas>
+    <div class="program-card" style="border-top-color:#5cb85c">
+      <div class="prog-head">
+        <h3>Residual Water Quality Monitoring</h3>
+        <span class="prog-target mono" id="prog7Target"></span>
       </div>
+      <div class="stat-grid" id="prog7Stats"></div>
     </div>
 
-    <!-- FIELD LOG -->
+    <!-- EMERGENCY TOILETS -->
+    <div class="section-head">
+      <span class="idx mono">PROG·08</span>
+      <h2>Emergency Toilet Facilities</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#6c5ce7">
+      <div class="prog-head">
+        <h3>Camp-Based Sanitation Infrastructure</h3>
+        <span class="prog-target mono" id="prog8Target"></span>
+      </div>
+      <div class="stat-grid" id="prog8Stats"></div>
+    </div>
+
+    <!-- WASTE MANAGEMENT -->
+    <div class="section-head">
+      <span class="idx mono">PROG·09</span>
+      <h2>Waste Management & Collection</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#f39c12">
+      <div class="prog-head">
+        <h3>Camp Solid Waste & Recycling Operations</h3>
+        <span class="prog-target mono" id="prog9Target"></span>
+      </div>
+      <div class="stat-grid" id="prog9Stats"></div>
+    </div>
+
+    <!-- CAMP AWARENESS -->
+    <div class="section-head">
+      <span class="idx mono">PROG·10</span>
+      <h2>Camp-Based Awareness Campaigns</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#e74c3c">
+      <div class="prog-head">
+        <h3>Health & Hygiene Education at Camps</h3>
+        <span class="prog-target mono" id="prog10Target"></span>
+      </div>
+      <div class="stat-grid" id="prog10Stats"></div>
+    </div>
+
+    <!-- DOOR-TO-DOOR OUTREACH -->
+    <div class="section-head">
+      <span class="idx mono">PROG·11</span>
+      <h2>Door-to-Door Community Outreach</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#16a085">
+      <div class="prog-head">
+        <h3>Household-Level Health & Sanitation Messaging</h3>
+        <span class="prog-target mono" id="prog11Target"></span>
+      </div>
+      <div class="stat-grid" id="prog11Stats"></div>
+    </div>
+
+    <!-- SPECIAL DRIVES -->
+    <div class="section-head">
+      <span class="idx mono">PROG·12</span>
+      <h2>Special Drives & Initiatives</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#2980b9">
+      <div class="prog-head">
+        <h3>Targeted Public Health Interventions</h3>
+        <span class="prog-target mono" id="prog12Target"></span>
+      </div>
+      <div class="stat-grid" id="prog12Stats"></div>
+    </div>
+
+    <!-- BOTTLE COLLECTION -->
+    <div class="section-head">
+      <span class="idx mono">PROG·13</span>
+      <h2>Plastic Bottle Collection</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#27ae60">
+      <div class="prog-head">
+        <h3>Environmental Sanitation & Recycling</h3>
+        <span class="prog-target mono" id="prog13Target"></span>
+      </div>
+      <div class="stat-grid" id="prog13Stats"></div>
+    </div>
+
+    <!-- INVENTORY MANAGEMENT -->
+    <div class="section-head">
+      <span class="idx mono">PROG·14</span>
+      <h2>Supply Chain & Inventory Management</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="program-card" style="border-top-color:#c0392b">
+      <div class="prog-head">
+        <h3>Chemical Inventory Buffer Status</h3>
+        <span class="prog-target mono" id="prog14Target"></span>
+      </div>
+      <div class="stat-grid" id="prog14Stats"></div>
+    </div>
+
+     <!-- UNIFIED FIELD LOG -->
     <div class="section-head">
       <span class="idx mono">LOG</span>
-      <h2>Field Operations Log — Water Supply Team</h2>
+      <h2>Unified Field Operations Log</h2>
       <div class="rule"></div>
     </div>
-    <div class="obj-block" style="border-top-color:var(--teal)">
+    <div class="program-card" style="border-top-color:var(--teal)">
+      <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <button class="action-btn" id="logFilterAll" onclick="filterLog('all')" style="background:#14506b;color:#fff;border:1px solid #14506b;">All Programs</button>
+        <button class="action-btn" id="logFilterTanker" onclick="filterLog('tanker')">Tanker</button>
+        <button class="action-btn" id="logFilterPWSS" onclick="filterLog('pwss')">PWSS</button>
+        <button class="action-btn" id="logFilterDewater" onclick="filterLog('dewater')">Dewater</button>
+        <button class="action-btn" id="logFilterHandpump" onclick="filterLog('handpump')">Hand Pumps</button>
+        <button class="action-btn" id="logFilterBleach" onclick="filterLog('bleach')">Bleach</button>
+        <button class="action-btn" id="logFilterTablets" onclick="filterLog('tablets')">Tablets</button>
+        <button class="action-btn" id="logFilterRWQT" onclick="filterLog('rwqt')">RWQT</button>
+        <button class="action-btn" id="logFilterToilets" onclick="filterLog('toilets')">Toilets</button>
+        <button class="action-btn" id="logFilterWaste" onclick="filterLog('waste')">Waste</button>
+        <button class="action-btn" id="logFilterAwareness" onclick="filterLog('awareness')">Outreach</button>
+        <button class="action-btn" id="logFilterBottles" onclick="filterLog('bottles')">Bottles</button>
+      </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Date</th><th>Tanker ID</th><th>Location</th><th>Qty (L)</th>
-              <th>Cl₂ (mg/L)</th><th>Status</th><th>Photo</th>
+              <th>Date</th><th>Program</th><th>Details</th><th>Value</th><th>Status</th><th>Photo</th>
             </tr>
           </thead>
-          <tbody id="recentBody">
-            <tr><td colspan="7" class="text-center text-muted">Loading…</td></tr>
+          <tbody id="unifiedLogBody">
+            <tr><td colspan="6" class="text-center text-muted">Loading…</td></tr>
           </tbody>
         </table>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);">
+        <div class="text-muted mono" style="font-size:12px;" id="logPageInfo">Page 1</div>
+        <div style="display:flex;gap:8px;">
+          <button class="action-btn" id="logPrevBtn" onclick="prevLogPage()" style="opacity:0.5;pointer-events:none;">← Previous</button>
+          <button class="action-btn" id="logNextBtn" onclick="nextLogPage()">Next →</button>
+        </div>
       </div>
     </div>
 
@@ -541,6 +579,7 @@
   };
 
   let currentData = {};
+  let logPaginationState = { currentPage: 1, totalPages: 1, entriesPerPage: 5 };
 
   function toNum(v){ return parseFloat(String(v).trim()) || 0; }
   function toStr(v){ return String(v || '').trim(); }
@@ -567,36 +606,9 @@
     return parseCSV(await resp.text());
   }
 
-  const WAVE_SVG = `<svg viewBox="0 0 200 16" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 8 Q 12.5 0 25 8 T 50 8 T 75 8 T 100 8 T 125 8 T 150 8 T 175 8 T 200 8 V16 H0 Z" fill="rgba(255,255,255,0.55)"/>
-  </svg>`;
-
-  function tankHTML(id, label, sub, color){
-    return `
-      <div class="tank-card">
-        <div class="tank">
-          <div class="tank-fill" id="fill-${id}" style="background:${color}">
-            <div style="position:absolute;top:-8px;left:0;width:200%;height:16px;animation:waveMove 3.2s linear infinite;">${WAVE_SVG}</div>
-          </div>
-        </div>
-        <div class="tank-pct" id="pct-${id}">0%</div>
-        <div class="tank-label">${label}</div>
-        <div class="tank-sub" id="sub-${id}">${sub}</div>
-      </div>`;
-  }
-
-  function setTank(id, value){
-    const fill = document.getElementById(`fill-${id}`);
-    const pctEl = document.getElementById(`pct-${id}`);
-    if(fill){ fill.style.height = value + '%'; }
-    if(pctEl){ pctEl.textContent = value + '%'; }
-  }
-
   function statHTML(n, l, sub=''){
     return `<div class="stat"><div class="n">${n}</div><div class="l">${l}</div>${sub?`<div class="sub">${sub}</div>`:''}</div>`;
   }
-
-  let chartInstance = null;
 
   async function loadDashboard(){
     try{
@@ -613,6 +625,22 @@
         fetchSheetCSV(SHEET_GIDS.bottle), fetchSheetCSV(SHEET_GIDS.special)
       ]);
 
+      // Log headers for debugging
+      console.log('Sheet Headers:');
+      console.log('Tanker:', tankerRows[0]);
+      console.log('PWSS:', pwssRows[0]);
+      console.log('Dewater:', dewaterRows[0]);
+      console.log('Handpump:', handpumpRows[0]);
+      console.log('Bleach:', bleachRows[0]);
+      console.log('Tablets:', tabletsRows[0]);
+      console.log('RWQT:', rwqtRows[0]);
+      console.log('Toilets:', toiletsRows[0]);
+      console.log('Waste:', wasteRows[0]);
+      console.log('CampAware:', campAwareRows[0]);
+      console.log('D2D:', d2dRows[0]);
+      console.log('Bottle:', bottleRows[0]);
+      console.log('Special:', specialRows[0]);
+
       const tankerData=tankerRows.slice(1), pwssData=pwssRows.slice(1), dewaterData=dewaterRows.slice(1),
             handpumpData=handpumpRows.slice(1), bleachData=bleachRows.slice(1), tabletsData=tabletsRows.slice(1),
             rwqtData=rwqtRows.slice(1), toiletsData=toiletsRows.slice(1), wasteData=wasteRows.slice(1),
@@ -621,23 +649,52 @@
 
       const today = new Date().toISOString().slice(0,10);
 
+      // Helper to find date column by searching for date-like values
+      function findDateCol(rows) {
+        if(rows.length === 0) return 0;
+        const firstRow = rows[0];
+        for(let i = 0; i < firstRow.length; i++) {
+          const val = toStr(firstRow[i]).toLowerCase();
+          if(val.includes('date') || val.includes('tanggal') || val.includes('तारीख')) return i;
+        }
+        return 0; // Default to first column
+      }
+
+      const dateColMap = {
+        tanker: findDateCol(tankerRows),
+        pwss: findDateCol(pwssRows),
+        dewater: findDateCol(dewaterRows),
+        handpump: findDateCol(handpumpRows),
+        bleach: findDateCol(bleachRows),
+        tablets: findDateCol(tabletsRows),
+        rwqt: findDateCol(rwqtRows),
+        toilets: findDateCol(toiletsRows),
+        waste: findDateCol(wasteRows),
+        campAware: findDateCol(campAwareRows),
+        d2d: findDateCol(d2dRows),
+        bottle: findDateCol(bottleRows),
+        special: findDateCol(specialRows)
+      };
+
+      console.log('Date Column Map:', dateColMap);
+
       const tripsTotal = tankerData.length;
-      const litersTotal = tankerData.reduce((s,r)=>s+toNum(r[1]),0);
-      const tripsToday = tankerData.filter(r => toStr(r[2]).startsWith(today)).length;
-      const litersToday = tankerData.filter(r => toStr(r[2]).startsWith(today)).reduce((s,r)=>s+toNum(r[1]),0);
+      const litersTotal = tankerData.reduce((s,r)=>s+toNum(r[3]),0);
+      const tripsToday = tankerData.filter(r => toStr(r[dateColMap.tanker]).startsWith(today)).length;
+      const litersToday = tankerData.filter(r => toStr(r[dateColMap.tanker]).startsWith(today)).reduce((s,r)=>s+toNum(r[3]),0);
 
       const chlorineValues = tankerData.map(r=>toNum(r[4])).filter(v=>v>0 && v<10);
       const passed = chlorineValues.filter(v=>v>=0.2 && v<=0.5);
       const passRate = chlorineValues.length>0 ? Math.round((passed.length/chlorineValues.length)*100) : 0;
 
-      const pwssRestored = pwssData.filter(r=>toStr(r[4]).toLowerCase()==='restored').length;
+      const pwssRestored = pwssData.filter(r=>toStr(r[5]).toLowerCase()==='restored').length;
       const dewaterCompleted = dewaterData.filter(r=>toStr(r[4]).toLowerCase()==='completed').length;
       const handPumpsTotal = handpumpData.reduce((s,r)=>s+toNum(r[1]),0);
       const bleachTotal = bleachData.reduce((s,r)=>s+toNum(r[2]),0);
       const tabletsTotal = tabletsData.reduce((s,r)=>s+toNum(r[2]),0);
       const rwqtTotal = rwqtData.reduce((s,r)=>s+toNum(r[2]),0);
       const funcToilets = toiletsData.filter(r=>toStr(r[3]).toLowerCase()==='functional').length;
-      const wasteAvailable = wasteData.filter(r=>toStr(r[3]).toLowerCase()==='available').length;
+      const wasteAvailable = wasteData.filter(r=>toStr(r[3]).toLowerCase()==='managed').length;
       const campAwareTotal = campAwareData.reduce((s,r)=>s+toNum(r[3]),0);
       const d2dTotal = d2dData.reduce((s,r)=>s+toNum(r[2]),0);
       const daysLeft = inventoryData.map(r=>toNum(r[1])).filter(v=>v>0);
@@ -652,48 +709,88 @@
         bottleData, specialData, tripsTotal, litersTotal, tripsToday, litersToday,
         passRate, pwssRestored, dewaterCompleted, handPumpsTotal, bleachTotal,
         tabletsTotal, rwqtTotal, funcToilets, wasteAvailable, campAwareTotal,
-        d2dTotal, minDays, bottlesTotal, specialCount, recent, today
+        d2dTotal, minDays, bottlesTotal, specialCount, recent, today, dateColMap
       };
 
-      const obj1 = Math.round((pct(tripsTotal,TARGETS.tripsToday*30)+pct(litersTotal,TARGETS.litersToday*30)+
-                    pct(pwssRestored,TARGETS.pwssRestored)+pct(dewaterCompleted,TARGETS.dewaterCompleted)+
-                    pct(handPumpsTotal,TARGETS.handPumps))/5);
-      const obj2 = Math.round((pct(passRate,TARGETS.passRate)+pct(rwqtTotal,TARGETS.rwqtTotal)+
-                    pct(bleachTotal,TARGETS.bleachTotal)+pct(tabletsTotal,TARGETS.tabletsTotal))/4);
-      const obj3 = Math.round((pct(funcToilets,TARGETS.funcToilets)+pct(wasteAvailable,TARGETS.wasteAvailable)+
-                    pct(bottlesTotal,TARGETS.bottlesTotal))/3);
-      const obj4 = Math.round((pct(campAwareTotal,TARGETS.campAwareTotal)+pct(d2dTotal,TARGETS.d2dTotal)+
-                    pct(specialCount,TARGETS.specialCount))/3);
-      const obj5 = minDays===99 ? 100 : Math.round(Math.min(100,(minDays/TARGETS.inventoryDaysSafe)*100));
-      const overall = Math.round((obj1+obj2+obj3+obj4+obj5)/5);
+      // Program 1: Water Tanker Supply
+      document.getElementById('prog1Stats').innerHTML =
+        statHTML(tripsTotal, 'Total Tanker Trips', `Today: ${tripsToday}`) +
+        statHTML(litersTotal.toLocaleString(), 'Total Liters Delivered', `Today: ${litersToday.toLocaleString()}`) +
+        statHTML(passRate + '%', 'Water Quality Pass Rate', 'Chlorine 0.2-0.5 mg/L');
+      document.getElementById('prog1Target').textContent = `TARGET: ${(TARGETS.tripsToday*30).toLocaleString()} TRIPS/MONTH`;
 
-      const tankRow = document.getElementById('tankRow');
-      tankRow.innerHTML =
-        `<div class="tank-card overall">
-           <div class="tank">
-             <div class="tank-fill" id="fill-overall" style="background:linear-gradient(180deg,#3ddc84,#1f9d5f)">
-               <div style="position:absolute;top:-8px;left:0;width:200%;height:16px;animation:waveMove 3.2s linear infinite;">${WAVE_SVG}</div>
-             </div>
-           </div>
-           <div class="tank-pct" id="pct-overall">0%</div>
-           <div class="tank-label">Mission Index</div>
-           <div class="tank-sub">Composite readiness</div>
-         </div>` +
-        tankHTML('obj1','Water Delivery','Obj·01','#14506b') +
-        tankHTML('obj2','Water Quality','Obj·02','#1f7a99') +
-        tankHTML('obj3','Sanitation','Obj·03','#2f8f5b') +
-        tankHTML('obj4','Outreach','Obj·04','#c9902e') +
-        tankHTML('obj5','Supply Buffer','Obj·05','#8f3b3b');
+      // Program 2: PWSS Restoration
+      document.getElementById('prog2Stats').innerHTML =
+        statHTML(pwssRestored, 'Schemes Restored', 'Cumulative');
+      document.getElementById('prog2Target').textContent = `TARGET: ${TARGETS.pwssRestored} SCHEMES`;
 
-      setTank('overall', overall); setTank('obj1', obj1); setTank('obj2', obj2);
-      setTank('obj3', obj3); setTank('obj4', obj4); setTank('obj5', obj5);
+      // Program 3: Dewatering
+      document.getElementById('prog3Stats').innerHTML =
+        statHTML(dewaterCompleted, 'Pump Houses Dewatered', 'Cumulative');
+      document.getElementById('prog3Target').textContent = `TARGET: ${TARGETS.dewaterCompleted} PUMP HOUSES`;
+
+      // Program 4: Hand Pump Repairs
+      document.getElementById('prog4Stats').innerHTML =
+        statHTML(handPumpsTotal, 'Hand Pumps Repaired', 'Cumulative');
+      document.getElementById('prog4Target').textContent = `TARGET: ${TARGETS.handPumps} PUMPS`;
+
+      // Program 5: Bleach Distribution
+      document.getElementById('prog5Stats').innerHTML =
+        statHTML(bleachTotal.toLocaleString(), 'Bleaching Powder (Kg)', 'Cumulative');
+      document.getElementById('prog5Target').textContent = `TARGET: ${TARGETS.bleachTotal} KG`;
+
+      // Program 6: Tablet Distribution
+      document.getElementById('prog6Stats').innerHTML =
+        statHTML(tabletsTotal.toLocaleString(), 'Disinfection Tablets', 'Cumulative');
+      document.getElementById('prog6Target').textContent = `TARGET: ${TARGETS.tabletsTotal.toLocaleString()} TABLETS`;
+
+      // Program 7: Water Quality Testing
+      document.getElementById('prog7Stats').innerHTML =
+        statHTML(rwqtTotal, 'Samples Tested', 'Cumulative') +
+        statHTML(passed.length, 'Within Safe Range', `of ${chlorineValues.length} tested`);
+      document.getElementById('prog7Target').textContent = `TARGET: ${TARGETS.rwqtTotal} SAMPLES`;
+
+      // Program 8: Emergency Toilets
+      document.getElementById('prog8Stats').innerHTML =
+        statHTML(funcToilets, 'Functional Toilets', 'Cumulative');
+      document.getElementById('prog8Target').textContent = `TARGET: ${TARGETS.funcToilets} TOILETS`;
+
+      // Program 9: Waste Management
+      document.getElementById('prog9Stats').innerHTML =
+        statHTML(wasteAvailable, 'Camps Covered', 'Cumulative');
+      document.getElementById('prog9Target').textContent = `TARGET: ${TARGETS.wasteAvailable} CAMPS`;
+
+      // Program 10: Camp Awareness
+      document.getElementById('prog10Stats').innerHTML =
+        statHTML(campAwareTotal.toLocaleString(), 'People Reached', 'Cumulative');
+      document.getElementById('prog10Target').textContent = `TARGET: ${TARGETS.campAwareTotal.toLocaleString()} PEOPLE`;
+
+      // Program 11: Door-to-Door
+      document.getElementById('prog11Stats').innerHTML =
+        statHTML(d2dTotal.toLocaleString(), 'Households Reached', 'Cumulative');
+      document.getElementById('prog11Target').textContent = `TARGET: ${TARGETS.d2dTotal.toLocaleString()} HH`;
+
+      // Program 12: Special Drives
+      document.getElementById('prog12Stats').innerHTML =
+        statHTML(specialCount, 'Drives Conducted', 'Cumulative');
+      document.getElementById('prog12Target').textContent = `TARGET: ${TARGETS.specialCount} DRIVES`;
+
+      // Program 13: Bottle Collection
+      document.getElementById('prog13Stats').innerHTML =
+        statHTML(bottlesTotal.toLocaleString(), 'Bottles Collected (Kg)', 'Cumulative');
+      document.getElementById('prog13Target').textContent = `TARGET: ${TARGETS.bottlesTotal.toLocaleString()} KG`;
+
+      // Program 14: Supply Chain
+      document.getElementById('prog14Stats').innerHTML =
+        statHTML(minDays===99?'∞':minDays, 'Lowest Stock (Days Left)', 'Current buffer');
+      document.getElementById('prog14Target').textContent = `SAFE BUFFER: ${TARGETS.inventoryDaysSafe}+ DAYS`;
 
       const badge = document.getElementById('alertBadge');
       const banner = document.getElementById('criticalBanner');
       const criticalText = document.getElementById('criticalText');
       const criticalIssues = [];
-      if(minDays < 3) criticalIssues.push(`chemical inventory critical — ${minDays===99?'no data':minDays+' day(s)'} of buffer remaining`);
-      if(passRate < 70 && chlorineValues.length>0) criticalIssues.push(`water quality pass rate low — ${passRate}% within safe chlorine range`);
+      if(minDays < 3) criticalIssues.push(`chemical inventory critical — ${minDays===99?'no data':minDays+' day(s)'} buffer`);
+      if(passRate < 70 && chlorineValues.length>0) criticalIssues.push(`water quality pass rate low — ${passRate}%`);
 
       if(criticalIssues.length){
         badge.innerHTML = '<span class="dot"></span>Critical Attention Required';
@@ -701,96 +798,199 @@
         banner.className = 'alert-banner show';
         criticalText.textContent = criticalIssues.join(' · ');
       } else {
-        badge.innerHTML = '<span class="dot"></span>All Objectives Nominal';
+        badge.innerHTML = '<span class="dot"></span>All Programs Active';
         badge.className = 'status-flag';
         banner.className = 'alert-banner';
       }
 
-      document.getElementById('obj1Stats').innerHTML =
-        statHTML(tripsTotal, 'Total Tanker Trips', `Today: ${tripsToday}`) +
-        statHTML(litersTotal.toLocaleString(), 'Total Liters Delivered', `Today: ${litersToday.toLocaleString()}`) +
-        statHTML(pwssRestored, 'PWSS Schemes Restored', 'Cumulative') +
-        statHTML(dewaterCompleted, 'Pump Houses Dewatered', 'Cumulative') +
-        statHTML(handPumpsTotal, 'Hand Pumps Repaired', 'Cumulative');
-      document.getElementById('obj1Target').textContent = `TARGET: ${(TARGETS.tripsToday*30).toLocaleString()} TRIPS/MONTH`;
+      // Build unified operations log using detected date columns
+      let allLogEntries = [];
+      
+      tankerData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.tanker]),
+          program: 'Water Tanker',
+          details: `Tanker ${toStr(r[1])} → ${toStr(r[2])}`,
+          value: toNum(r[3]).toLocaleString() + ' L',
+          status: (v=>v>0?(v>=0.2 && v<=0.5?'Safe':v>0.5?'High':'Low'):'—')(toNum(r[4])),
+          statusClass: (v=>v>0?(v>=0.2 && v<=0.5?'green':v>0.5?'yellow':'red'):'')(toNum(r[4])),
+          photo: toStr(r[5]),
+          type: 'tanker'
+        });
+      });
 
-      document.getElementById('obj2Stats').innerHTML =
-        statHTML(rwqtTotal, 'RWQT Samples Tested', 'Cumulative') +
-        statHTML(bleachTotal.toLocaleString(), 'Bleaching Powder (Kg)', 'Cumulative') +
-        statHTML(tabletsTotal.toLocaleString(), 'Disinfection Tablets', 'Cumulative');
-      document.getElementById('obj2Target').textContent = `TARGET: ${TARGETS.passRate}% PASS RATE`;
-
-      document.getElementById('obj3Stats').innerHTML =
-        statHTML(funcToilets, 'Functional Toilets', 'Cumulative') +
-        statHTML(wasteAvailable, 'Camps w/ Waste Mgmt', 'Cumulative') +
-        statHTML(bottlesTotal.toLocaleString(), 'Bottles Collected (Kg)', 'Cumulative');
-      document.getElementById('obj3Target').textContent = `TARGET: ${TARGETS.funcToilets} TOILETS · ${TARGETS.wasteAvailable} CAMPS`;
-
-      document.getElementById('obj4Stats').innerHTML =
-        statHTML(campAwareTotal.toLocaleString(), 'Camp Awareness Reach', 'Cumulative') +
-        statHTML(d2dTotal.toLocaleString(), 'Door-to-Door Households', 'Cumulative') +
-        statHTML(specialCount, 'Special Drives Conducted', 'Cumulative');
-      document.getElementById('obj4Target').textContent = `TARGET: ${TARGETS.campAwareTotal.toLocaleString()} PEOPLE`;
-
-      document.getElementById('obj5Stats').innerHTML =
-        statHTML(minDays===99?'∞':minDays, 'Lowest Stock (Days Left)', 'Current buffer');
-      document.getElementById('obj5Target').textContent = `SAFE BUFFER: ${TARGETS.inventoryDaysSafe}+ DAYS`;
-
-      document.getElementById('gaugeValue').textContent = passRate + '%';
-      const gcolor = passRate>=90 ? '#2f8f5b' : (passRate>=70 ? '#c9902e' : '#b72f3d');
-      document.getElementById('gaugeRing').style.background =
-        `conic-gradient(${gcolor} 0% ${passRate}%, #e4eae7 ${passRate}% 100%)`;
-      document.getElementById('gaugeLabel').textContent =
-        `${chlorineValues.length} samples tested · ${passed.length} within 0.2–0.5 mg/L`;
-
-      const ctx = document.getElementById('activityChart').getContext('2d');
-      if(chartInstance) chartInstance.destroy();
-      const chartLabels = ['Trips','Liters(÷1k)','PWSS','Dewater','Hand Pumps','Bleach(Kg)','Tablets','RWQT',
-                            'Toilets','Waste Camps','Camp Aware','D2D HH','Bottles(Kg)','Special Drives'];
-      chartInstance = new Chart(ctx, {
-        type:'bar',
-        data:{
-          labels: chartLabels,
-          datasets:[{
-            label:'Program Activity (Cumulative)',
-            data:[tripsTotal, litersTotal/1000, pwssRestored, dewaterCompleted, handPumpsTotal,
-                  bleachTotal, tabletsTotal, rwqtTotal, funcToilets, wasteAvailable,
-                  campAwareTotal, d2dTotal, bottlesTotal, specialCount],
-            backgroundColor:'#14506b',
-            borderRadius:3
-          }]
-        },
-        options:{
-          responsive:true, maintainAspectRatio:false,
-          plugins:{ legend:{display:false} },
-          scales:{ y:{ beginAtZero:true, grid:{color:'#eef2ef'} }, x:{ grid:{display:false} } }
+      pwssData.forEach(r=>{
+        const status = toStr(r[5]).toLowerCase();
+        if(status === 'restored'){
+          allLogEntries.push({
+            date: toStr(r[dateColMap.pwss]),
+            program: 'PWSS Restoration',
+            details: toStr(r[2]),
+            value: 'Restored',
+            status: 'Complete',
+            statusClass: 'green',
+            photo: toStr(r[7]),
+            type: 'pwss'
+          });
         }
       });
 
-      const tbody = document.getElementById('recentBody');
-      tbody.innerHTML = '';
-      if(recent.length===0){
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No entries yet</td></tr>';
-      } else {
-        recent.forEach(r=>{
-          const date=toStr(r[2]), tanker=toStr(r[0]), loc=toStr(r[3]), qty=toNum(r[1]),
-                chlor=toNum(r[4]), photo=toStr(r[5]);
-          let status='—', cls='';
-          if(chlor>0){
-            if(chlor>=0.2 && chlor<=0.5){ status='Safe'; cls='green'; }
-            else if(chlor>0.5){ status='High'; cls='yellow'; }
-            else { status='Low'; cls='red'; }
-          }
-          let photoHtml = '—';
-          if(photo && photo.startsWith('http')){
-            photoHtml = `<a href="${photo}" target="_blank" class="photo-link">View →</a>`;
-          }
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${date}</td><td>${tanker}</td><td>${loc}</td><td>${qty.toLocaleString()}</td>
-            <td>${chlor>0?chlor.toFixed(2):'—'}</td><td><span class="status-badge ${cls}">${status}</span></td><td>${photoHtml}</td>`;
-          tbody.appendChild(tr);
+      dewaterData.forEach(r=>{
+        const status = toStr(r[4]).toLowerCase();
+        if(status === 'completed'){
+          allLogEntries.push({
+            date: toStr(r[dateColMap.dewater]),
+            program: 'Dewatering',
+            details: toStr(r[2]),
+            value: '1 Pump House',
+            status: 'Completed',
+            statusClass: 'green',
+            photo: toStr(r[5]),
+            type: 'dewater'
+          });
+        }
+      });
+
+      handpumpData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.handpump]),
+          program: 'Hand Pumps',
+          details: toStr(r[2]),
+          value: toNum(r[1]) + ' repaired',
+          status: 'Done',
+          statusClass: 'green',
+          photo: toStr(r[3]),
+          type: 'handpump'
         });
-      }
+      });
+
+      bleachData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.bleach]),
+          program: 'Bleach Supply',
+          details: toStr(r[1]),
+          value: toNum(r[2]).toLocaleString() + ' Kg',
+          status: 'Distributed',
+          statusClass: 'green',
+          photo: toStr(r[3]),
+          type: 'bleach'
+        });
+      });
+
+      tabletsData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.tablets]),
+          program: 'Tablets Supply',
+          details: toStr(r[1]),
+          value: toNum(r[2]).toLocaleString() + ' tablets',
+          status: 'Distributed',
+          statusClass: 'green',
+          photo: toStr(r[3]),
+          type: 'tablets'
+        });
+      });
+
+      rwqtData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.rwqt]),
+          program: 'Water Quality Testing',
+          details: toStr(r[1]),
+          value: toNum(r[2]) + ' samples',
+          status: 'Tested',
+          statusClass: 'green',
+          photo: toStr(r[3]),
+          type: 'rwqt'
+        });
+      });
+
+      toiletsData.forEach(r=>{
+        const status = toStr(r[3]).toLowerCase();
+        if(status === 'functional'){
+          allLogEntries.push({
+            date: toStr(r[dateColMap.toilets]),
+            program: 'Emergency Toilets',
+            details: `${toStr(r[2])} · ${toStr(r[1])}`,
+            value: '1 Toilet',
+            status: 'Functional',
+            statusClass: 'green',
+            photo: toStr(r[5]),
+            type: 'toilets'
+          });
+        }
+      });
+
+      wasteData.forEach(r=>{
+        const status = toStr(r[3]).toLowerCase();
+        if(status === 'managed'){
+          allLogEntries.push({
+            date: toStr(r[dateColMap.waste]),
+            program: 'Waste Management',
+            details: `${toStr(r[2])} · ${toStr(r[1])}`,
+            value: '1 Camp',
+            status: 'Managed',
+            statusClass: 'green',
+            photo: toStr(r[5]),
+            type: 'waste'
+          });
+        }
+      });
+
+      campAwareData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.campAware]),
+          program: 'Camp Awareness',
+          details: toStr(r[2]),
+          value: toNum(r[3]).toLocaleString() + ' people',
+          status: 'Reached',
+          statusClass: 'green',
+          photo: toStr(r[4]),
+          type: 'awareness'
+        });
+      });
+
+      d2dData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.d2d]),
+          program: 'Door-to-Door',
+          details: toStr(r[1]),
+          value: toNum(r[2]).toLocaleString() + ' HH',
+          status: 'Reached',
+          statusClass: 'green',
+          photo: toStr(r[3]),
+          type: 'awareness'
+        });
+      });
+
+      bottleData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.bottle]),
+          program: 'Bottle Collection',
+          details: toStr(r[2]),
+          value: toNum(r[3]).toLocaleString() + ' Kg',
+          status: 'Collected',
+          statusClass: 'green',
+          photo: toStr(r[4]),
+          type: 'bottles'
+        });
+      });
+
+      specialData.forEach(r=>{
+        allLogEntries.push({
+          date: toStr(r[dateColMap.special]),
+          program: 'Special Drive',
+          details: toStr(r[1]),
+          value: toStr(r[2]),
+          status: 'Active',
+          statusClass: 'green',
+          photo: toStr(r[3]),
+          type: 'awareness'
+        });
+      });
+
+      currentData.allLogEntries = allLogEntries;
+      currentData.logFilter = 'all';
+      logPaginationState.currentPage = 1;
+      updateUnifiedLog();
 
       document.getElementById('lastUpdate').textContent = `SYNCED ${new Date().toLocaleString()}`;
       document.getElementById('loading').classList.add('hidden');
@@ -814,6 +1014,132 @@
       document.getElementById('refreshBtn').classList.remove('loading');
       document.getElementById('refreshSpinner').style.display = 'none';
       document.getElementById('refreshText').textContent = 'Refresh';
+    }
+  }
+
+  function filterLog(filterType){
+    currentData.logFilter = filterType;
+    logPaginationState.currentPage = 1;
+    updateUnifiedLog();
+    document.querySelectorAll('[id^="logFilter"]').forEach(btn => btn.style.opacity = '0.6');
+    
+    const buttonIdMap = {
+      'all': 'logFilterAll',
+      'tanker': 'logFilterTanker',
+      'pwss': 'logFilterPWSS',
+      'dewater': 'logFilterDewater',
+      'handpump': 'logFilterHandpump',
+      'bleach': 'logFilterBleach',
+      'tablets': 'logFilterTablets',
+      'rwqt': 'logFilterRWQT',
+      'toilets': 'logFilterToilets',
+      'waste': 'logFilterWaste',
+      'awareness': 'logFilterAwareness',
+      'bottles': 'logFilterBottles'
+    };
+    
+    const buttonId = buttonIdMap[filterType];
+    const btn = document.getElementById(buttonId);
+    if(btn) btn.style.opacity = '1';
+  }
+
+  function getFilteredEntries(){
+    let filtered = currentData.allLogEntries || [];
+    const filterType = currentData.logFilter || 'all';
+    
+    if(filterType !== 'all'){
+      const typeMap = {
+        tanker: 'tanker',
+        pwss: 'pwss',
+        dewater: 'dewater',
+        handpump: 'handpump',
+        bleach: 'bleach',
+        tablets: 'tablets',
+        rwqt: 'rwqt',
+        toilets: 'toilets',
+        waste: ['waste', 'bottles'],
+        awareness: ['awareness', 'd2d', 'special'],
+        bottles: 'bottles'
+      };
+      const types = Array.isArray(typeMap[filterType]) ? typeMap[filterType] : [typeMap[filterType]];
+      filtered = filtered.filter(e => types.includes(e.type));
+    }
+    
+    filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+    return filtered;
+  }
+
+  function updateUnifiedLog(){
+    const tbody = document.getElementById('unifiedLogBody');
+    tbody.innerHTML = '';
+    
+    const filtered = getFilteredEntries();
+    const { entriesPerPage } = logPaginationState;
+    const totalPages = Math.ceil(filtered.length / entriesPerPage);
+    
+    logPaginationState.totalPages = totalPages;
+    
+    const startIdx = (logPaginationState.currentPage - 1) * entriesPerPage;
+    const endIdx = startIdx + entriesPerPage;
+    const pageEntries = filtered.slice(startIdx, endIdx);
+    
+    if(pageEntries.length === 0){
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No entries for this filter</td></tr>';
+      updatePaginationControls();
+      return;
+    }
+    
+    pageEntries.forEach(entry => {
+      let photoHtml = '—';
+      if(entry.photo && entry.photo.startsWith('http')){
+        photoHtml = `<a href="${entry.photo}" target="_blank" class="photo-link">View →</a>`;
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${entry.date}</td><td>${entry.program}</td><td>${entry.details}</td><td>${entry.value}</td><td><span class="status-badge ${entry.statusClass}">${entry.status}</span></td><td>${photoHtml}</td>`;
+      tbody.appendChild(tr);
+    });
+    
+    updatePaginationControls();
+  }
+
+  function updatePaginationControls(){
+    const { currentPage, totalPages } = logPaginationState;
+    const pageInfo = document.getElementById('logPageInfo');
+    const prevBtn = document.getElementById('logPrevBtn');
+    const nextBtn = document.getElementById('logNextBtn');
+    
+    pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+    
+    if(currentPage > 1){
+      prevBtn.style.opacity = '1';
+      prevBtn.style.pointerEvents = 'auto';
+    } else {
+      prevBtn.style.opacity = '0.5';
+      prevBtn.style.pointerEvents = 'none';
+    }
+    
+    if(currentPage < totalPages){
+      nextBtn.style.opacity = '1';
+      nextBtn.style.pointerEvents = 'auto';
+    } else {
+      nextBtn.style.opacity = '0.5';
+      nextBtn.style.pointerEvents = 'none';
+    }
+  }
+
+  function prevLogPage(){
+    if(logPaginationState.currentPage > 1){
+      logPaginationState.currentPage--;
+      updateUnifiedLog();
+      document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function nextLogPage(){
+    if(logPaginationState.currentPage < logPaginationState.totalPages){
+      logPaginationState.currentPage++;
+      updateUnifiedLog();
+      document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
@@ -841,7 +1167,6 @@
           .stat-value { font-size: 24px; font-weight: bold; color: #0d2438; }
           .stat-label { font-size: 12px; color: #5b6b66; text-transform: uppercase; margin-top: 5px; }
           .page-break { page-break-after: always; }
-          .summary { background: #eef2ef; padding: 20px; border-radius: 4px; margin: 20px 0; }
         </style>
       </head>
       <body>
@@ -851,95 +1176,42 @@
           <p>Generated: ${now}</p>
         </div>
 
-        <div class="summary">
-          <h2>Executive Summary</h2>
-          <div class="stat-row">
-            <div class="stat-box">
-              <div class="stat-value">${data.tripsTotal}</div>
-              <div class="stat-label">Total Tanker Trips</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-value">${(data.litersTotal/1000).toFixed(0)}k</div>
-              <div class="stat-label">Total Liters Delivered</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-value">${data.passRate}%</div>
-              <div class="stat-label">Water Quality Pass Rate</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-value">${data.minDays === 99 ? '∞' : data.minDays}</div>
-              <div class="stat-label">Days of Supply Buffer</div>
-            </div>
-          </div>
-        </div>
-
-        <h2>Objective 1: Safe Water Delivery</h2>
+        <h2>Program Summary</h2>
         <table>
-          <tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>Total Tanker Trips</td><td>${data.tripsTotal}</td></tr>
-          <tr><td>Today's Trips</td><td>${data.tripsToday}</td></tr>
-          <tr><td>Total Liters Delivered</td><td>${data.litersTotal.toLocaleString()}</td></tr>
-          <tr><td>Today's Liters</td><td>${data.litersToday.toLocaleString()}</td></tr>
-          <tr><td>PWSS Schemes Restored</td><td>${data.pwssRestored}</td></tr>
-          <tr><td>Pump Houses Dewatered</td><td>${data.dewaterCompleted}</td></tr>
-          <tr><td>Hand Pumps Repaired</td><td>${data.handPumpsTotal}</td></tr>
-        </table>
-
-        <h2>Objective 2: Water Quality & Treatment</h2>
-        <table>
-          <tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>RWQT Samples Tested</td><td>${data.rwqtTotal}</td></tr>
-          <tr><td>Chlorine Pass Rate (0.2-0.5 mg/L)</td><td>${data.passRate}%</td></tr>
-          <tr><td>Bleaching Powder (Kg)</td><td>${data.bleachTotal.toLocaleString()}</td></tr>
-          <tr><td>Disinfection Tablets</td><td>${data.tabletsTotal.toLocaleString()}</td></tr>
-        </table>
-
-        <h2>Objective 3: Sanitation & Waste Management</h2>
-        <table>
-          <tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>Functional Toilets</td><td>${data.funcToilets}</td></tr>
-          <tr><td>Camps with Waste Management</td><td>${data.wasteAvailable}</td></tr>
-          <tr><td>Bottles Collected (Kg)</td><td>${data.bottlesTotal.toLocaleString()}</td></tr>
-        </table>
-
-        <h2>Objective 4: Community Outreach</h2>
-        <table>
-          <tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>Camp Awareness Reach</td><td>${data.campAwareTotal.toLocaleString()}</td></tr>
-          <tr><td>Door-to-Door Households</td><td>${data.d2dTotal.toLocaleString()}</td></tr>
-          <tr><td>Special Drives Conducted</td><td>${data.specialCount}</td></tr>
-        </table>
-
-        <h2>Objective 5: Supply Chain Readiness</h2>
-        <table>
-          <tr><th>Metric</th><th>Value</th></tr>
-          <tr><td>Minimum Stock Buffer (Days)</td><td>${data.minDays === 99 ? 'No data' : data.minDays}</td></tr>
-          <tr><td>Safe Buffer Target</td><td>7+ days</td></tr>
-          <tr><td>Status</td><td>${data.minDays < 3 ? 'CRITICAL' : (data.minDays < 7 ? 'WARNING' : 'SAFE')}</td></tr>
+          <tr><th>Program</th><th>Metric</th><th>Value</th></tr>
+          <tr><td>Water Tanker Supply</td><td>Total Trips / Today</td><td>${data.tripsTotal} / ${data.tripsToday}</td></tr>
+          <tr><td>Water Tanker Supply</td><td>Total Liters Delivered</td><td>${(data.litersTotal/1000).toFixed(0)}k L</td></tr>
+          <tr><td>Water Tanker Supply</td><td>Water Quality Pass Rate</td><td>${data.passRate}%</td></tr>
+          <tr><td>PWSS Restoration</td><td>Schemes Restored</td><td>${data.pwssRestored}</td></tr>
+          <tr><td>Pump House Dewatering</td><td>Pump Houses Dewatered</td><td>${data.dewaterCompleted}</td></tr>
+          <tr><td>Hand Pump Repairs</td><td>Hand Pumps Repaired</td><td>${data.handPumpsTotal}</td></tr>
+          <tr><td>Bleach Distribution</td><td>Total Supply (Kg)</td><td>${data.bleachTotal.toLocaleString()}</td></tr>
+          <tr><td>Disinfection Tablets</td><td>Total Supply</td><td>${data.tabletsTotal.toLocaleString()}</td></tr>
+          <tr><td>Water Quality Testing</td><td>Samples Tested</td><td>${data.rwqtTotal}</td></tr>
+          <tr><td>Emergency Toilets</td><td>Functional Toilets</td><td>${data.funcToilets}</td></tr>
+          <tr><td>Waste Management</td><td>Camps Covered</td><td>${data.wasteAvailable}</td></tr>
+          <tr><td>Camp Awareness</td><td>People Reached</td><td>${data.campAwareTotal.toLocaleString()}</td></tr>
+          <tr><td>Door-to-Door Outreach</td><td>Households Reached</td><td>${data.d2dTotal.toLocaleString()}</td></tr>
+          <tr><td>Special Drives</td><td>Drives Conducted</td><td>${data.specialCount}</td></tr>
+          <tr><td>Bottle Collection</td><td>Collected (Kg)</td><td>${data.bottlesTotal.toLocaleString()}</td></tr>
+          <tr><td>Supply Chain</td><td>Min Buffer (Days)</td><td>${data.minDays === 99 ? '∞' : data.minDays}</td></tr>
         </table>
 
         <div class="page-break"></div>
-        <h2>Recent Field Operations Log</h2>
+        <h2>Recent Field Operations</h2>
         <table>
-          <tr><th>Date</th><th>Tanker ID</th><th>Location</th><th>Qty (L)</th><th>Cl₂ (mg/L)</th><th>Status</th></tr>
+          <tr><th>Date</th><th>Program</th><th>Details</th><th>Value</th></tr>
     `);
 
-    data.recent.forEach(r => {
-      const date = toStr(r[2]), tanker = toStr(r[0]), loc = toStr(r[3]), qty = toNum(r[1]), chlor = toNum(r[4]);
-      let status = '—';
-      if(chlor > 0){
-        if(chlor >= 0.2 && chlor <= 0.5) status = 'Safe';
-        else if(chlor > 0.5) status = 'High';
-        else status = 'Low';
-      }
+    const recentEntries = currentData.allLogEntries ? currentData.allLogEntries.sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 20) : [];
+    
+    recentEntries.forEach(entry => {
       doc.write(`
         <tr>
-          <td>${date}</td>
-          <td>${tanker}</td>
-          <td>${loc}</td>
-          <td>${qty.toLocaleString()}</td>
-          <td>${chlor > 0 ? chlor.toFixed(2) : '—'}</td>
-          <td>${status}</td>
+          <td>${entry.date}</td>
+          <td>${entry.program}</td>
+          <td>${entry.details}</td>
+          <td>${entry.value}</td>
         </tr>
       `);
     });
@@ -964,7 +1236,6 @@
   }
 
   loadDashboard();
-  setInterval(loadDashboard, 60000);
 </script>
 
 </body>
